@@ -1,0 +1,56 @@
+{{template "base.html" .}}
+{{define "title"}}Детали раунда - Дискуссионный клуб{{end}}
+
+{{define "content"}}
+<h2>Детали раунда</h2>
+
+{{if .Round}}
+<div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 2px solid rgba(102, 126, 234, 0.2); border-radius: 12px; padding: 25px; margin: 20px 0;">
+    <h3>Информация о раунде</h3>
+    <p><strong>Номер раунда:</strong> {{.Round.RoundNumber}}</p>
+    <p><strong>Дата:</strong> {{.Round.RoundDate.Format "02.01.2006"}}</p>
+    {{if .Tournament}}
+    <p><strong>Турнир:</strong> {{.Tournament.Name}}</p>
+    {{end}}
+    {{if .Topic}}
+    <p><strong>Тема:</strong> {{.Topic.Title}}</p>
+    {{end}}
+</div>
+
+{{if .Participants}}
+<h3>Участники раунда</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Участник</th>
+            <th>Позиция</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Participants}}
+        <tr>
+            <td>{{.FirstName}} {{.LastName}}</td>
+            <td>
+                <span class="status-badge {{if eq .Position "for"}}status-active{{else}}status-upcoming{{end}}">
+                    {{if eq .Position "for"}}За{{else}}Против{{end}}
+                </span>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{else}}
+<div class="empty-state">
+    <p>В этом раунде пока нет участников.</p>
+</div>
+{{end}}
+
+<a href="/rounds" class="btn">← Назад к списку раундов</a>
+{{else}}
+<div class="empty-state">
+    <p>Раунд не найден.</p>
+</div>
+<a href="/rounds" class="btn">← Назад к списку раундов</a>
+{{end}}
+{{end}}
+

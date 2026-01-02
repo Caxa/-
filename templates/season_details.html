@@ -1,0 +1,67 @@
+{{template "base.html" .}}
+{{define "title"}}Детали сезона - Дискуссионный клуб{{end}}
+
+{{define "content"}}
+<h2>Детали сезона</h2>
+
+{{if .Season}}
+<div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 2px solid rgba(102, 126, 234, 0.2); border-radius: 12px; padding: 25px; margin: 20px 0;">
+    <h3>Информация о сезоне</h3>
+    <p><strong>Название:</strong> {{.Season.Name}}</p>
+    <p><strong>Дата начала:</strong> {{.Season.StartDate.Format "02.01.2006"}}</p>
+    <p><strong>Дата окончания:</strong> {{.Season.EndDate.Format "02.01.2006"}}</p>
+</div>
+
+{{if .Tournaments}}
+{{$count := len .Tournaments}}
+{{if gt $count 0}}
+<h3>Турниры сезона</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Tournaments}}
+        <tr>
+            <td><strong>{{.Name}}</strong></td>
+            <td>{{.StartDate.Format "02.01.2006"}}</td>
+            <td>{{if .EndDate}}{{.EndDate.Format "02.01.2006"}}{{else}}-{{end}}</td>
+            <td>
+                <span class="status-badge 
+                    {{if eq .Status "активный"}}status-active
+                    {{else if eq .Status "завершен"}}status-completed
+                    {{else}}status-upcoming{{end}}">
+                    {{if eq .Status "активный"}}Активный
+                    {{else if eq .Status "завершен"}}Завершен
+                    {{else}}Предстоящий{{end}}
+                </span>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{else}}
+<div class="empty-state">
+    <p>В этом сезоне пока нет турниров.</p>
+</div>
+{{end}}
+{{else}}
+<div class="empty-state">
+    <p>В этом сезоне пока нет турниров.</p>
+</div>
+{{end}}
+
+<a href="/seasons" class="btn">← Назад к списку сезонов</a>
+{{else}}
+<div class="empty-state">
+    <p>Сезон не найден.</p>
+</div>
+<a href="/seasons" class="btn">← Назад к списку сезонов</a>
+{{end}}
+{{end}}
+
