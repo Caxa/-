@@ -14,18 +14,56 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
+// Получение справочных данных
+
+func (r *Repository) GetTournamentStatuses() ([]models.TournamentStatus, error) {
+	rows, err := r.db.Query("SELECT id, code, name, description, created_at FROM tournament_statuses ORDER BY id")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var statuses []models.TournamentStatus
+	for rows.Next() {
+		var s models.TournamentStatus
+		if err := rows.Scan(&s.ID, &s.Code, &s.Name, &s.Description, &s.CreatedAt); err != nil {
+			return nil, err
+		}
+		statuses = append(statuses, s)
+	}
+	return statuses, rows.Err()
+}
+
+func (r *Repository) GetDebatePositions() ([]models.DebatePosition, error) {
+	rows, err := r.db.Query("SELECT id, code, name, description, created_at FROM debate_positions ORDER BY id")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var positions []models.DebatePosition
+	for rows.Next() {
+		var p models.DebatePosition
+		if err := rows.Scan(&p.ID, &p.Code, &p.Name, &p.Description, &p.CreatedAt); err != nil {
+			return nil, err
+		}
+		positions = append(positions, p)
+	}
+	return positions, rows.Err()
+}
+
 // Участники
 func (r *Repository) CreateParticipant(firstName, lastName, email string) (int, error) {
 	var id int
 	err := r.db.QueryRow(
-		"INSERT INTO участники (имя, фамилия, электронная_почта) VALUES ($1, $2, $3) RETURNING ид",
+		"INSERT INTO participants (first_name, last_name, email) VALUES ($1, $2, $3) RETURNING id",
 		firstName, lastName, email,
 	).Scan(&id)
 	return id, err
 }
 
 func (r *Repository) GetParticipants() ([]models.Participant, error) {
-	rows, err := r.db.Query("SELECT ид, имя, фамилия, электронная_почта, дата_создания FROM участники ORDER BY ид")
+	rows, err := r.db.Query("SELECT id, first_name, last_name, email, created_at FROM participants ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -44,14 +82,14 @@ func (r *Repository) GetParticipants() ([]models.Participant, error) {
 
 func (r *Repository) UpdateParticipant(id int, firstName, lastName, email string) error {
 	_, err := r.db.Exec(
-		"UPDATE участники SET имя = $1, фамилия = $2, электронная_почта = $3 WHERE ид = $4",
+		"UPDATE participants SET first_name = $1, last_name = $2, email = $3 WHERE id = $4",
 		firstName, lastName, email, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteParticipant(id int) error {
-	_, err := r.db.Exec("DELETE FROM участники WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM participants WHERE id = $1", id)
 	return err
 }
 
@@ -59,14 +97,14 @@ func (r *Repository) DeleteParticipant(id int) error {
 func (r *Repository) CreateJudge(firstName, lastName, email string) (int, error) {
 	var id int
 	err := r.db.QueryRow(
-		"INSERT INTO жюри (имя, фамилия, электронная_почта) VALUES ($1, $2, $3) RETURNING ид",
+		"INSERT INTO judges (first_name, last_name, email) VALUES ($1, $2, $3) RETURNING id",
 		firstName, lastName, email,
 	).Scan(&id)
 	return id, err
 }
 
 func (r *Repository) GetJudges() ([]models.Judge, error) {
-	rows, err := r.db.Query("SELECT ид, имя, фамилия, электронная_почта, дата_создания FROM жюри ORDER BY ид")
+	rows, err := r.db.Query("SELECT id, first_name, last_name, email, created_at FROM judges ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -85,14 +123,14 @@ func (r *Repository) GetJudges() ([]models.Judge, error) {
 
 func (r *Repository) UpdateJudge(id int, firstName, lastName, email string) error {
 	_, err := r.db.Exec(
-		"UPDATE жюри SET имя = $1, фамилия = $2, электронная_почта = $3 WHERE ид = $4",
+		"UPDATE judges SET first_name = $1, last_name = $2, email = $3 WHERE id = $4",
 		firstName, lastName, email, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteJudge(id int) error {
-	_, err := r.db.Exec("DELETE FROM жюри WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM judges WHERE id = $1", id)
 	return err
 }
 
@@ -100,14 +138,14 @@ func (r *Repository) DeleteJudge(id int) error {
 func (r *Repository) CreateTopic(title, description string) (int, error) {
 	var id int
 	err := r.db.QueryRow(
-		"INSERT INTO темы (заголовок, описание) VALUES ($1, $2) RETURNING ид",
+		"INSERT INTO topics (title, description) VALUES ($1, $2) RETURNING id",
 		title, description,
 	).Scan(&id)
 	return id, err
 }
 
 func (r *Repository) GetTopics() ([]models.Topic, error) {
-	rows, err := r.db.Query("SELECT ид, заголовок, описание, дата_создания FROM темы ORDER BY ид")
+	rows, err := r.db.Query("SELECT id, title, description, created_at FROM topics ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +164,7 @@ func (r *Repository) GetTopics() ([]models.Topic, error) {
 
 func (r *Repository) GetTopicByID(id int) (*models.Topic, error) {
 	var t models.Topic
-	err := r.db.QueryRow("SELECT ид, заголовок, описание, дата_создания FROM темы WHERE ид = $1", id).
+	err := r.db.QueryRow("SELECT id, title, description, created_at FROM topics WHERE id = $1", id).
 		Scan(&t.ID, &t.Title, &t.Description, &t.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -136,14 +174,14 @@ func (r *Repository) GetTopicByID(id int) (*models.Topic, error) {
 
 func (r *Repository) UpdateTopic(id int, title, description string) error {
 	_, err := r.db.Exec(
-		"UPDATE темы SET заголовок = $1, описание = $2 WHERE ид = $3",
+		"UPDATE topics SET title = $1, description = $2 WHERE id = $3",
 		title, description, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteTopic(id int) error {
-	_, err := r.db.Exec("DELETE FROM темы WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM topics WHERE id = $1", id)
 	return err
 }
 
@@ -151,14 +189,14 @@ func (r *Repository) DeleteTopic(id int) error {
 func (r *Repository) CreateSeason(name string, startDate, endDate time.Time) (int, error) {
 	var id int
 	err := r.db.QueryRow(
-		"INSERT INTO сезоны (название, дата_начала, дата_окончания) VALUES ($1, $2, $3) RETURNING ид",
+		"INSERT INTO seasons (name, start_date, end_date) VALUES ($1, $2, $3) RETURNING id",
 		name, startDate, endDate,
 	).Scan(&id)
 	return id, err
 }
 
 func (r *Repository) GetSeasons() ([]models.Season, error) {
-	rows, err := r.db.Query("SELECT ид, название, дата_начала, дата_окончания, дата_создания FROM сезоны ORDER BY ид")
+	rows, err := r.db.Query("SELECT id, name, start_date, end_date, created_at FROM seasons ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +215,7 @@ func (r *Repository) GetSeasons() ([]models.Season, error) {
 
 func (r *Repository) GetSeasonByID(id int) (*models.Season, error) {
 	var s models.Season
-	err := r.db.QueryRow("SELECT ид, название, дата_начала, дата_окончания, дата_создания FROM сезоны WHERE ид = $1", id).
+	err := r.db.QueryRow("SELECT id, name, start_date, end_date, created_at FROM seasons WHERE id = $1", id).
 		Scan(&s.ID, &s.Name, &s.StartDate, &s.EndDate, &s.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -187,23 +225,31 @@ func (r *Repository) GetSeasonByID(id int) (*models.Season, error) {
 
 func (r *Repository) UpdateSeason(id int, name string, startDate, endDate time.Time) error {
 	_, err := r.db.Exec(
-		"UPDATE сезоны SET название = $1, дата_начала = $2, дата_окончания = $3 WHERE ид = $4",
+		"UPDATE seasons SET name = $1, start_date = $2, end_date = $3 WHERE id = $4",
 		name, startDate, endDate, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteSeason(id int) error {
-	_, err := r.db.Exec("DELETE FROM сезоны WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM seasons WHERE id = $1", id)
 	return err
 }
 
 // Турниры
 func (r *Repository) CreateTournament(seasonID int, name string, startDate time.Time, endDate *time.Time) (int, error) {
+	// Получаем статус "upcoming" по умолчанию (триггер обновит его автоматически)
+	var statusID int
+	err := r.db.QueryRow("SELECT id FROM tournament_statuses WHERE code = 'upcoming'").Scan(&statusID)
+	if err != nil {
+		// Если статуса нет, используем значение по умолчанию (будет установлено триггером)
+		statusID = 1
+	}
+	
 	var id int
-	err := r.db.QueryRow(
-		"INSERT INTO турниры (ид_сезона, название, дата_начала, дата_окончания) VALUES ($1, $2, $3, $4) RETURNING ид",
-		seasonID, name, startDate, endDate,
+	err = r.db.QueryRow(
+		"INSERT INTO tournaments (season_id, name, start_date, end_date, status_id) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+		seasonID, name, startDate, endDate, statusID,
 	).Scan(&id)
 	return id, err
 }
@@ -213,9 +259,19 @@ func (r *Repository) GetTournaments() ([]models.Tournament, error) {
 	r.UpdateAllTournamentStatuses()
 	
 	rows, err := r.db.Query(`
-		SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания 
-		FROM турниры 
-		ORDER BY дата_начала DESC
+		SELECT 
+			t.id, 
+			t.season_id, 
+			t.name, 
+			t.start_date, 
+			t.end_date, 
+			t.status_id,
+			ts.code as status_code,
+			ts.name as status_name,
+			t.created_at 
+		FROM tournaments t
+		LEFT JOIN tournament_statuses ts ON t.status_id = ts.id
+		ORDER BY t.start_date DESC
 	`)
 	if err != nil {
 		return nil, err
@@ -225,8 +281,16 @@ func (r *Repository) GetTournaments() ([]models.Tournament, error) {
 	var tournaments []models.Tournament
 	for rows.Next() {
 		var t models.Tournament
-		if err := rows.Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.Status, &t.CreatedAt); err != nil {
+		var statusCode, statusName sql.NullString
+		if err := rows.Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.StatusID, &statusCode, &statusName, &t.CreatedAt); err != nil {
 			return nil, err
+		}
+		if statusCode.Valid && statusName.Valid {
+			t.Status = &models.TournamentStatus{
+				ID:   t.StatusID,
+				Code: statusCode.String,
+				Name: statusName.String,
+			}
 		}
 		tournaments = append(tournaments, t)
 	}
@@ -238,24 +302,46 @@ func (r *Repository) GetTournamentByID(id int) (*models.Tournament, error) {
 	r.UpdateAllTournamentStatuses()
 	
 	var t models.Tournament
-	err := r.db.QueryRow("SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания FROM турниры WHERE ид = $1", id).
-		Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.Status, &t.CreatedAt)
+	var statusCode, statusName sql.NullString
+	err := r.db.QueryRow(`
+		SELECT 
+			t.id, 
+			t.season_id, 
+			t.name, 
+			t.start_date, 
+			t.end_date, 
+			t.status_id,
+			ts.code as status_code,
+			ts.name as status_name,
+			t.created_at 
+		FROM tournaments t
+		LEFT JOIN tournament_statuses ts ON t.status_id = ts.id
+		WHERE t.id = $1
+	`, id).
+		Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.StatusID, &statusCode, &statusName, &t.CreatedAt)
 	if err != nil {
 		return nil, err
+	}
+	if statusCode.Valid && statusName.Valid {
+		t.Status = &models.TournamentStatus{
+			ID:   t.StatusID,
+			Code: statusCode.String,
+			Name: statusName.String,
+		}
 	}
 	return &t, nil
 }
 
 func (r *Repository) UpdateTournament(id int, seasonID int, name string, startDate time.Time, endDate *time.Time) error {
 	_, err := r.db.Exec(
-		"UPDATE турниры SET ид_сезона = $1, название = $2, дата_начала = $3, дата_окончания = $4 WHERE ид = $5",
+		"UPDATE tournaments SET season_id = $1, name = $2, start_date = $3, end_date = $4 WHERE id = $5",
 		seasonID, name, startDate, endDate, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteTournament(id int) error {
-	_, err := r.db.Exec("DELETE FROM турниры WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM tournaments WHERE id = $1", id)
 	return err
 }
 
@@ -263,7 +349,7 @@ func (r *Repository) DeleteTournament(id int) error {
 func (r *Repository) CreateRound(tournamentID, topicID, roundNumber int, roundDate time.Time) (int, error) {
 	var id int
 	err := r.db.QueryRow(
-		"INSERT INTO раунды (ид_турнира, ид_темы, номер_раунда, дата_раунда) VALUES ($1, $2, $3, $4) RETURNING ид",
+		"INSERT INTO rounds (tournament_id, topic_id, round_number, round_date) VALUES ($1, $2, $3, $4) RETURNING id",
 		tournamentID, topicID, roundNumber, roundDate,
 	).Scan(&id)
 	return id, err
@@ -271,9 +357,9 @@ func (r *Repository) CreateRound(tournamentID, topicID, roundNumber int, roundDa
 
 func (r *Repository) GetRounds() ([]models.Round, error) {
 	rows, err := r.db.Query(`
-		SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания 
-		FROM раунды 
-		ORDER BY ид_турнира, номер_раунда
+		SELECT id, tournament_id, topic_id, round_number, round_date, created_at 
+		FROM rounds 
+		ORDER BY tournament_id, round_number
 	`)
 	if err != nil {
 		return nil, err
@@ -293,10 +379,10 @@ func (r *Repository) GetRounds() ([]models.Round, error) {
 
 func (r *Repository) GetRoundsByTournament(tournamentID int) ([]models.Round, error) {
 	rows, err := r.db.Query(`
-		SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания 
-		FROM раунды 
-		WHERE ид_турнира = $1
-		ORDER BY номер_раунда
+		SELECT id, tournament_id, topic_id, round_number, round_date, created_at 
+		FROM rounds 
+		WHERE tournament_id = $1
+		ORDER BY round_number
 	`, tournamentID)
 	if err != nil {
 		return nil, err
@@ -316,7 +402,7 @@ func (r *Repository) GetRoundsByTournament(tournamentID int) ([]models.Round, er
 
 func (r *Repository) GetRoundByID(id int) (*models.Round, error) {
 	var round models.Round
-	err := r.db.QueryRow("SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания FROM раунды WHERE ид = $1", id).
+	err := r.db.QueryRow("SELECT id, tournament_id, topic_id, round_number, round_date, created_at FROM rounds WHERE id = $1", id).
 		Scan(&round.ID, &round.TournamentID, &round.TopicID, &round.RoundNumber, &round.RoundDate, &round.CreatedAt)
 	if err != nil {
 		return nil, err
@@ -326,39 +412,58 @@ func (r *Repository) GetRoundByID(id int) (*models.Round, error) {
 
 func (r *Repository) GetRoundsCountByTournament(tournamentID int) (int, error) {
 	var count int
-	err := r.db.QueryRow("SELECT COUNT(*) FROM раунды WHERE ид_турнира = $1", tournamentID).Scan(&count)
+	err := r.db.QueryRow("SELECT COUNT(*) FROM rounds WHERE tournament_id = $1", tournamentID).Scan(&count)
 	return count, err
 }
 
 func (r *Repository) UpdateRound(id int, tournamentID, topicID, roundNumber int, roundDate time.Time) error {
 	_, err := r.db.Exec(
-		"UPDATE раунды SET ид_турнира = $1, ид_темы = $2, номер_раунда = $3, дата_раунда = $4 WHERE ид = $5",
+		"UPDATE rounds SET tournament_id = $1, topic_id = $2, round_number = $3, round_date = $4 WHERE id = $5",
 		tournamentID, topicID, roundNumber, roundDate, id,
 	)
 	return err
 }
 
 func (r *Repository) DeleteRound(id int) error {
-	_, err := r.db.Exec("DELETE FROM раунды WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM rounds WHERE id = $1", id)
 	return err
 }
 
 // Выступления
-func (r *Repository) CreatePerformance(roundID, participantID int, position string, logicScore, rhetoricScore, eruditionScore *int, judgeID int) (int, error) {
+func (r *Repository) CreatePerformance(roundID, participantID int, positionCode string, logicScore, rhetoricScore, eruditionScore *int, judgeID int) (int, error) {
+	// Получаем position_id по коду ('for' или 'against')
+	var positionID int
+	err := r.db.QueryRow("SELECT id FROM debate_positions WHERE code = $1", positionCode).Scan(&positionID)
+	if err != nil {
+		return 0, err
+	}
+	
 	var id int
-	err := r.db.QueryRow(
-		`INSERT INTO выступления (ид_раунда, ид_участника, позиция, оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи) 
-		 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ид`,
-		roundID, participantID, position, logicScore, rhetoricScore, eruditionScore, judgeID,
+	err = r.db.QueryRow(
+		`INSERT INTO performances (round_id, participant_id, position_id, logic_score, rhetoric_score, erudition_score, judge_id) 
+		 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+		roundID, participantID, positionID, logicScore, rhetoricScore, eruditionScore, judgeID,
 	).Scan(&id)
 	return id, err
 }
 
 func (r *Repository) GetPerformances() ([]models.Performance, error) {
 	rows, err := r.db.Query(`
-		SELECT ид, ид_раунда, ид_участника, позиция, оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи, дата_создания 
-		FROM выступления 
-		ORDER BY ид
+		SELECT 
+			perf.id, 
+			perf.round_id, 
+			perf.participant_id, 
+			perf.position_id,
+			dp.code as position_code,
+			dp.name as position_name,
+			perf.logic_score, 
+			perf.rhetoric_score, 
+			perf.erudition_score, 
+			perf.judge_id, 
+			perf.created_at 
+		FROM performances perf
+		LEFT JOIN debate_positions dp ON perf.position_id = dp.id
+		ORDER BY perf.id
 	`)
 	if err != nil {
 		return nil, err
@@ -368,8 +473,16 @@ func (r *Repository) GetPerformances() ([]models.Performance, error) {
 	var performances []models.Performance
 	for rows.Next() {
 		var p models.Performance
-		if err := rows.Scan(&p.ID, &p.RoundID, &p.ParticipantID, &p.Position, &p.LogicScore, &p.RhetoricScore, &p.EruditionScore, &p.JudgeID, &p.CreatedAt); err != nil {
+		var positionCode, positionName sql.NullString
+		if err := rows.Scan(&p.ID, &p.RoundID, &p.ParticipantID, &p.PositionID, &positionCode, &positionName, &p.LogicScore, &p.RhetoricScore, &p.EruditionScore, &p.JudgeID, &p.CreatedAt); err != nil {
 			return nil, err
+		}
+		if positionCode.Valid && positionName.Valid {
+			p.Position = &models.DebatePosition{
+				ID:   p.PositionID,
+				Code: positionCode.String,
+				Name: positionName.String,
+			}
 		}
 		performances = append(performances, p)
 	}
@@ -378,14 +491,14 @@ func (r *Repository) GetPerformances() ([]models.Performance, error) {
 
 func (r *Repository) UpdatePerformance(id int, logicScore, rhetoricScore, eruditionScore *int) error {
 	_, err := r.db.Exec(
-		"UPDATE выступления SET оценка_логики = $1, оценка_риторики = $2, оценка_эрудиции = $3 WHERE ид = $4",
+		"UPDATE performances SET logic_score = $1, rhetoric_score = $2, erudition_score = $3 WHERE id = $4",
 		logicScore, rhetoricScore, eruditionScore, id,
 	)
 	return err
 }
 
 func (r *Repository) DeletePerformance(id int) error {
-	_, err := r.db.Exec("DELETE FROM выступления WHERE ид = $1", id)
+	_, err := r.db.Exec("DELETE FROM performances WHERE id = $1", id)
 	return err
 }
 
@@ -393,18 +506,19 @@ func (r *Repository) DeletePerformance(id int) error {
 func (r *Repository) GetTournamentParticipants(tournamentID int) ([]models.TournamentParticipant, error) {
 	query := `
 		SELECT DISTINCT
-			у.ид as participant_id,
-			у.имя as first_name,
-			у.фамилия as last_name,
-			т.ид as topic_id,
-			т.заголовок as topic_title,
-			в.позиция as position
-		FROM участники у
-		JOIN выступления в ON у.ид = в.ид_участника
-		JOIN раунды р ON в.ид_раунда = р.ид
-		JOIN темы т ON р.ид_темы = т.ид
-		WHERE р.ид_турнира = $1
-		ORDER BY т.ид, у.ид
+			p.id as participant_id,
+			p.first_name as first_name,
+			p.last_name as last_name,
+			t.id as topic_id,
+			t.title as topic_title,
+			dp.name as position
+		FROM participants p
+		JOIN performances perf ON p.id = perf.participant_id
+		JOIN rounds r ON perf.round_id = r.id
+		JOIN topics t ON r.topic_id = t.id
+		JOIN debate_positions dp ON perf.position_id = dp.id
+		WHERE r.tournament_id = $1
+		ORDER BY t.id, p.id
 	`
 	rows, err := r.db.Query(query, tournamentID)
 	if err != nil {
@@ -427,15 +541,15 @@ func (r *Repository) GetTournamentParticipants(tournamentID int) ([]models.Tourn
 func (r *Repository) GetTournamentResults(tournamentID int) ([]models.TournamentResult, error) {
 	query := `
 		SELECT 
-			у.ид as participant_id,
-			у.имя as first_name,
-			у.фамилия as last_name,
-			COALESCE(SUM(расчет_итогового_балла(в.оценка_логики, в.оценка_риторики, в.оценка_эрудиции)), 0) as total_score
-		FROM участники у
-		JOIN выступления в ON у.ид = в.ид_участника
-		JOIN раунды р ON в.ид_раунда = р.ид
-		WHERE р.ид_турнира = $1
-		GROUP BY у.ид, у.имя, у.фамилия
+			p.id as participant_id,
+			p.first_name as first_name,
+			p.last_name as last_name,
+			COALESCE(SUM(calculate_total_score(perf.logic_score, perf.rhetoric_score, perf.erudition_score)), 0) as total_score
+		FROM participants p
+		JOIN performances perf ON p.id = perf.participant_id
+		JOIN rounds r ON perf.round_id = r.id
+		WHERE r.tournament_id = $1
+		GROUP BY p.id, p.first_name, p.last_name
 		ORDER BY total_score DESC
 	`
 	rows, err := r.db.Query(query, tournamentID)
@@ -463,52 +577,52 @@ func (r *Repository) GetTopicsWhereAgainstWins() ([]models.TopicWinStats, error)
 	query := `
 		WITH round_scores AS (
 			SELECT 
-				р.ид_темы,
-				р.ид as round_id,
-				в.позиция,
-				SUM(COALESCE(в.оценка_логики, 0) + COALESCE(в.оценка_риторики, 0) + COALESCE(в.оценка_эрудиции, 0)) as team_score
-			FROM выступления в
-			JOIN раунды р ON в.ид_раунда = р.ид
-			WHERE в.оценка_логики IS NOT NULL 
-			  AND в.оценка_риторики IS NOT NULL 
-			  AND в.оценка_эрудиции IS NOT NULL
-			GROUP BY р.ид_темы, р.ид, в.позиция
+				r.topic_id,
+				r.id as round_id,
+				dp.code as position_code,
+				SUM(COALESCE(perf.logic_score, 0) + COALESCE(perf.rhetoric_score, 0) + COALESCE(perf.erudition_score, 0)) as team_score
+			FROM performances perf
+			JOIN rounds r ON perf.round_id = r.id
+			JOIN debate_positions dp ON perf.position_id = dp.id
+			WHERE perf.logic_score IS NOT NULL 
+			  AND perf.rhetoric_score IS NOT NULL 
+			  AND perf.erudition_score IS NOT NULL
+			GROUP BY r.topic_id, r.id, dp.code
 		),
 		round_winners AS (
 			SELECT 
-				ид_темы,
+				topic_id,
 				round_id,
-				позиция,
+				position_code,
 				team_score,
-				MAX(team_score) OVER (PARTITION BY ид_темы, round_id) as max_score
+				MAX(team_score) OVER (PARTITION BY topic_id, round_id) as max_score
 			FROM round_scores
 		),
 		winners_only AS (
 			SELECT 
-				ид_темы,
+				topic_id,
 				round_id,
-				позиция,
+				position_code,
 				team_score
 			FROM round_winners
 			WHERE team_score = max_score
 		),
 		wins_by_position AS (
 			SELECT 
-				ид_темы,
-				COUNT(DISTINCT CASE WHEN позиция = 'За' THEN round_id END) as for_wins,
-				COUNT(DISTINCT CASE WHEN позиция = 'Против' THEN round_id END) as against_wins
+				topic_id,
+				COUNT(DISTINCT CASE WHEN position_code = 'for' THEN round_id END) as for_wins,
+				COUNT(DISTINCT CASE WHEN position_code = 'against' THEN round_id END) as against_wins
 			FROM winners_only
-			GROUP BY ид_темы
+			GROUP BY topic_id
 		)
 		SELECT 
-			т.ид as topic_id,
-			т.заголовок as topic_title,
+			t.id as topic_id,
+			t.title as topic_title,
 			COALESCE(w.for_wins, 0) as for_wins,
 			COALESCE(w.against_wins, 0) as against_wins
-		FROM темы т
-		LEFT JOIN wins_by_position w ON т.ид = w.ид_темы
-		WHERE COALESCE(w.against_wins, 0) > 0
-		ORDER BY against_wins DESC, т.ид
+		FROM topics t
+		LEFT JOIN wins_by_position w ON t.id = w.topic_id
+		ORDER BY t.id
 	`
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -531,16 +645,16 @@ func (r *Repository) GetTopicsWhereAgainstWins() ([]models.TopicWinStats, error)
 func (r *Repository) GetParticipantRatingForSeason(seasonID int) ([]models.ParticipantRating, error) {
 	query := `
 		SELECT 
-			у.ид as participant_id,
-			у.имя as first_name,
-			у.фамилия as last_name,
-			COALESCE(SUM(расчет_итогового_балла(в.оценка_логики, в.оценка_риторики, в.оценка_эрудиции)), 0) as total_score
-		FROM участники у
-		INNER JOIN выступления в ON у.ид = в.ид_участника
-		INNER JOIN раунды р ON в.ид_раунда = р.ид
-		INNER JOIN турниры т ON р.ид_турнира = т.ид
-		WHERE т.ид_сезона = $1
-		GROUP BY у.ид, у.имя, у.фамилия
+			p.id as participant_id,
+			p.first_name as first_name,
+			p.last_name as last_name,
+			COALESCE(SUM(calculate_total_score(perf.logic_score, perf.rhetoric_score, perf.erudition_score)), 0) as total_score
+		FROM participants p
+		INNER JOIN performances perf ON p.id = perf.participant_id
+		INNER JOIN rounds r ON perf.round_id = r.id
+		INNER JOIN tournaments t ON r.tournament_id = t.id
+		WHERE t.season_id = $1
+		GROUP BY p.id, p.first_name, p.last_name
 		ORDER BY total_score DESC
 	`
 	rows, err := r.db.Query(query, seasonID)
@@ -564,19 +678,19 @@ func (r *Repository) GetParticipantRatingForSeason(seasonID int) ([]models.Parti
 func (r *Repository) GetAverageScores() ([]models.AverageScores, error) {
 	query := `
 		SELECT 
-			у.ид as participant_id,
-			у.имя as first_name,
-			у.фамилия as last_name,
-			ROUND(AVG(в.оценка_логики)::numeric, 2) as avg_logic,
-			ROUND(AVG(в.оценка_риторики)::numeric, 2) as avg_rhetoric,
-			ROUND(AVG(в.оценка_эрудиции)::numeric, 2) as avg_erudition
-		FROM участники у
-		LEFT JOIN выступления в ON у.ид = в.ид_участника
-		WHERE в.оценка_логики IS NOT NULL 
-		  AND в.оценка_риторики IS NOT NULL 
-		  AND в.оценка_эрудиции IS NOT NULL
-		GROUP BY у.ид, у.имя, у.фамилия
-		ORDER BY у.ид
+			p.id as participant_id,
+			p.first_name as first_name,
+			p.last_name as last_name,
+			ROUND(AVG(perf.logic_score)::numeric, 2) as avg_logic,
+			ROUND(AVG(perf.rhetoric_score)::numeric, 2) as avg_rhetoric,
+			ROUND(AVG(perf.erudition_score)::numeric, 2) as avg_erudition
+		FROM participants p
+		LEFT JOIN performances perf ON p.id = perf.participant_id
+		WHERE perf.logic_score IS NOT NULL 
+		  AND perf.rhetoric_score IS NOT NULL 
+		  AND perf.erudition_score IS NOT NULL
+		GROUP BY p.id, p.first_name, p.last_name
+		ORDER BY p.id
 	`
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -599,14 +713,14 @@ func (r *Repository) GetAverageScores() ([]models.AverageScores, error) {
 func (r *Repository) GetJudgesByTournamentCount() ([]models.JudgeTournamentCount, error) {
 	query := `
 		SELECT 
-			ж.ид as judge_id,
-			ж.имя as first_name,
-			ж.фамилия as last_name,
-			COUNT(DISTINCT р.ид_турнира) as count
-		FROM жюри ж
-		JOIN выступления в ON ж.ид = в.ид_судьи
-		JOIN раунды р ON в.ид_раунда = р.ид
-		GROUP BY ж.ид, ж.имя, ж.фамилия
+			j.id as judge_id,
+			j.first_name as first_name,
+			j.last_name as last_name,
+			COUNT(DISTINCT r.tournament_id) as count
+		FROM judges j
+		JOIN performances perf ON j.id = perf.judge_id
+		JOIN rounds r ON perf.round_id = r.id
+		GROUP BY j.id, j.first_name, j.last_name
 		ORDER BY count DESC
 	`
 	rows, err := r.db.Query(query)
@@ -630,15 +744,15 @@ func (r *Repository) GetJudgesByTournamentCount() ([]models.JudgeTournamentCount
 func (r *Repository) GetRepeatedTopicsInSeason(seasonID int) ([]models.RepeatedTopic, error) {
 	query := `
 		SELECT 
-			т.ид as topic_id,
-			т.заголовок as topic_title,
-			COUNT(DISTINCT р.ид_турнира) as usage_count
-		FROM темы т
-		JOIN раунды р ON т.ид = р.ид_темы
-		JOIN турниры тур ON р.ид_турнира = тур.ид
-		WHERE тур.ид_сезона = $1
-		GROUP BY т.ид, т.заголовок
-		HAVING COUNT(DISTINCT р.ид_турнира) > 1
+			t.id as topic_id,
+			t.title as topic_title,
+			COUNT(DISTINCT r.tournament_id) as usage_count
+		FROM topics t
+		JOIN rounds r ON t.id = r.topic_id
+		JOIN tournaments tour ON r.tournament_id = tour.id
+		WHERE tour.season_id = $1
+		GROUP BY t.id, t.title
+		HAVING COUNT(DISTINCT r.tournament_id) > 1
 		ORDER BY usage_count DESC
 	`
 	rows, err := r.db.Query(query, seasonID)
@@ -662,21 +776,22 @@ func (r *Repository) GetRepeatedTopicsInSeason(seasonID int) ([]models.RepeatedT
 func (r *Repository) GetTournamentSchedule(tournamentID int) ([]models.TournamentSchedule, error) {
 	query := `
 		SELECT 
-			р.номер_раунда,
-			р.дата_раунда,
-			т.заголовок as topic_title,
+			r.round_number,
+			r.round_date,
+			t.title as topic_title,
 			STRING_AGG(
-				у.имя || ' ' || у.фамилия || ' (' || в.позиция || ')',
+				p.first_name || ' ' || p.last_name || ' (' || dp.name || ')',
 				', '
-				ORDER BY в.позиция, у.фамилия
+				ORDER BY dp.code, p.last_name
 			) as participants
-		FROM раунды р
-		JOIN темы т ON р.ид_темы = т.ид
-		LEFT JOIN выступления в ON р.ид = в.ид_раунда
-		LEFT JOIN участники у ON в.ид_участника = у.ид
-		WHERE р.ид_турнира = $1
-		GROUP BY р.номер_раунда, р.дата_раунда, т.заголовок
-		ORDER BY р.номер_раунда
+		FROM rounds r
+		JOIN topics t ON r.topic_id = t.id
+		LEFT JOIN performances perf ON r.id = perf.round_id
+		LEFT JOIN participants p ON perf.participant_id = p.id
+		LEFT JOIN debate_positions dp ON perf.position_id = dp.id
+		WHERE r.tournament_id = $1
+		GROUP BY r.round_number, r.round_date, t.title
+		ORDER BY r.round_number
 	`
 	rows, err := r.db.Query(query, tournamentID)
 	if err != nil {
@@ -698,13 +813,13 @@ func (r *Repository) GetTournamentSchedule(tournamentID int) ([]models.Tournamen
 // Получить участников сезона
 func (r *Repository) GetParticipantsBySeason(seasonID int) ([]models.Participant, error) {
 	query := `
-		SELECT DISTINCT у.ид, у.имя, у.фамилия, у.электронная_почта, у.дата_создания
-		FROM участники у
-		JOIN выступления в ON у.ид = в.ид_участника
-		JOIN раунды р ON в.ид_раунда = р.ид
-		JOIN турниры т ON р.ид_турнира = т.ид
-		WHERE т.ид_сезона = $1
-		ORDER BY у.фамилия, у.имя
+		SELECT DISTINCT p.id, p.first_name, p.last_name, p.email, p.created_at
+		FROM participants p
+		JOIN performances perf ON p.id = perf.participant_id
+		JOIN rounds r ON perf.round_id = r.id
+		JOIN tournaments t ON r.tournament_id = t.id
+		WHERE t.season_id = $1
+		ORDER BY p.last_name, p.first_name
 	`
 	rows, err := r.db.Query(query, seasonID)
 	if err != nil {
@@ -728,7 +843,22 @@ func (r *Repository) GetTournamentsBySeason(seasonID int) ([]models.Tournament, 
 	// Обновляем статусы перед получением
 	r.UpdateAllTournamentStatuses()
 	
-	rows, err := r.db.Query("SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания FROM турниры WHERE ид_сезона = $1 ORDER BY дата_начала", seasonID)
+	rows, err := r.db.Query(`
+		SELECT 
+			t.id, 
+			t.season_id, 
+			t.name, 
+			t.start_date, 
+			t.end_date, 
+			t.status_id,
+			ts.code as status_code,
+			ts.name as status_name,
+			t.created_at 
+		FROM tournaments t
+		LEFT JOIN tournament_statuses ts ON t.status_id = ts.id
+		WHERE t.season_id = $1 
+		ORDER BY t.start_date
+	`, seasonID)
 	if err != nil {
 		return nil, err
 	}
@@ -737,8 +867,16 @@ func (r *Repository) GetTournamentsBySeason(seasonID int) ([]models.Tournament, 
 	var tournaments []models.Tournament
 	for rows.Next() {
 		var t models.Tournament
-		if err := rows.Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.Status, &t.CreatedAt); err != nil {
+		var statusCode, statusName sql.NullString
+		if err := rows.Scan(&t.ID, &t.SeasonID, &t.Name, &t.StartDate, &t.EndDate, &t.StatusID, &statusCode, &statusName, &t.CreatedAt); err != nil {
 			return nil, err
+		}
+		if statusCode.Valid && statusName.Valid {
+			t.Status = &models.TournamentStatus{
+				ID:   t.StatusID,
+				Code: statusCode.String,
+				Name: statusName.String,
+			}
 		}
 		tournaments = append(tournaments, t)
 	}
@@ -748,11 +886,11 @@ func (r *Repository) GetTournamentsBySeason(seasonID int) ([]models.Tournament, 
 // Получить участников раунда
 func (r *Repository) GetParticipantsByRound(roundID int) ([]models.Participant, error) {
 	query := `
-		SELECT DISTINCT у.ид, у.имя, у.фамилия, у.электронная_почта, у.дата_создания
-		FROM участники у
-		JOIN выступления в ON у.ид = в.ид_участника
-		WHERE в.ид_раунда = $1
-		ORDER BY у.фамилия, у.имя
+		SELECT DISTINCT p.id, p.first_name, p.last_name, p.email, p.created_at
+		FROM participants p
+		JOIN performances perf ON p.id = perf.participant_id
+		WHERE perf.round_id = $1
+		ORDER BY p.last_name, p.first_name
 	`
 	rows, err := r.db.Query(query, roundID)
 	if err != nil {
@@ -774,15 +912,23 @@ func (r *Repository) GetParticipantsByRound(roundID int) ([]models.Participant, 
 // Обновить статусы всех турниров на основе текущей даты
 func (r *Repository) UpdateAllTournamentStatuses() error {
 	// Используем функцию из базы данных для обновления статусов
-	_, err := r.db.Exec("SELECT обновить_все_статусы_турниров()")
+	_, err := r.db.Exec("SELECT update_all_tournament_statuses()")
 	if err != nil {
-		// Если функция не существует, используем прямой UPDATE
+		// Если функция не существует, используем прямой UPDATE с JOIN на tournament_statuses
 		_, err = r.db.Exec(`
-			UPDATE турниры
-			SET статус = CASE
-				WHEN дата_окончания IS NOT NULL AND дата_окончания < CURRENT_DATE THEN 'завершен'
-				WHEN дата_начала <= CURRENT_DATE AND (дата_окончания IS NULL OR дата_окончания >= CURRENT_DATE) THEN 'активный'
-				ELSE 'предстоящий'
+			WITH status_ids AS (
+				SELECT 
+					id as upcoming_id,
+					(SELECT id FROM tournament_statuses WHERE code = 'active') as active_id,
+					(SELECT id FROM tournament_statuses WHERE code = 'completed') as completed_id
+				FROM tournament_statuses WHERE code = 'upcoming'
+				LIMIT 1
+			)
+			UPDATE tournaments t
+			SET status_id = CASE
+				WHEN t.end_date IS NOT NULL AND t.end_date < CURRENT_DATE THEN (SELECT completed_id FROM status_ids)
+				WHEN t.start_date <= CURRENT_DATE AND (t.end_date IS NULL OR t.end_date >= CURRENT_DATE) THEN (SELECT active_id FROM status_ids)
+				ELSE (SELECT upcoming_id FROM status_ids)
 			END
 		`)
 	}

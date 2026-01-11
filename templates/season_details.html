@@ -33,12 +33,10 @@
             <td>{{if .EndDate}}{{.EndDate.Format "02.01.2006"}}{{else}}-{{end}}</td>
             <td>
                 <span class="status-badge 
-                    {{if eq .Status "активный"}}status-active
-                    {{else if eq .Status "завершен"}}status-completed
+                    {{if and .Status (eq .Status.Code "active")}}status-active
+                    {{else if and .Status (eq .Status.Code "completed")}}status-completed
                     {{else}}status-upcoming{{end}}">
-                    {{if eq .Status "активный"}}Активный
-                    {{else if eq .Status "завершен"}}Завершен
-                    {{else}}Предстоящий{{end}}
+                    {{if .Status}}{{.Status.Name}}{{else}}Предстоящий{{end}}
                 </span>
             </td>
         </tr>

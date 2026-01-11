@@ -30,11 +30,7 @@
         {{range .Participants}}
         <tr>
             <td>{{.FirstName}} {{.LastName}}</td>
-            <td>
-                <span class="status-badge {{if eq .Position "for"}}status-active{{else}}status-upcoming{{end}}">
-                    {{if eq .Position "for"}}За{{else}}Против{{end}}
-                </span>
-            </td>
+            <td>-</td>
         </tr>
         {{end}}
     </tbody>

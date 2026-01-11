@@ -21,7 +21,56 @@ func NewHandlers(repo *repository.Repository) (*Handlers, error) {
 	tmpl, err := template.New("").Funcs(template.FuncMap{
 		"add":    func(a, b int) int { return a + b },
 		"sub":    func(a, b int) int { return a - b },
+		"mul":    func(a, b int) int { return a * b },
+		"div":    func(a, b int) float64 { return float64(a) / float64(b) },
+		"divFloat": func(a, b float64) float64 { return a / b },
 		"printf": fmt.Sprintf,
+		"deref": func(p *int) int {
+			if p == nil {
+				return 0
+			}
+			return *p
+		},
+		"average": func(nums ...int) float64 {
+			if len(nums) == 0 {
+				return 0
+			}
+			sum := 0
+			count := 0
+			for _, n := range nums {
+				if n > 0 {
+					sum += n
+					count++
+				}
+			}
+			if count == 0 {
+				return 0
+			}
+			return float64(sum) / float64(count)
+		},
+		"averageScores": func(logic, rhetoric, erudition *int) float64 {
+			count := 0
+			sum := 0
+			if logic != nil && *logic > 0 {
+				sum += *logic
+				count++
+			}
+			if rhetoric != nil && *rhetoric > 0 {
+				sum += *rhetoric
+				count++
+			}
+			if erudition != nil && *erudition > 0 {
+				sum += *erudition
+				count++
+			}
+			if count == 0 {
+				return 0
+			}
+			return float64(sum) / float64(count)
+		},
+		"gtFloat": func(a, b float64) bool {
+			return a > b
+		},
 		"getMapValue": func(m map[int]int, key int) int {
 			if m == nil {
 				return 0
@@ -75,6 +124,12 @@ func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
 		performances = []models.Performance{}
 	}
 
+	// Берем последние 6 турниров, отсортированных по дате начала (по убыванию)
+	latestTournaments := tournaments
+	if len(latestTournaments) > 6 {
+		latestTournaments = latestTournaments[:6]
+	}
+	
 	data := map[string]interface{}{
 		"Stats": map[string]int{
 			"Participants": len(participants),
@@ -85,6 +140,7 @@ func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
 			"Rounds":        len(rounds),
 			"Performances":  len(performances),
 		},
+		"LatestTournaments": latestTournaments,
 	}
 	
 	if err := h.templates.ExecuteTemplate(w, "index.html", data); err != nil {
@@ -653,19 +709,23 @@ func (h *Handlers) TournamentsList(w http.ResponseWriter, r *http.Request) {
 		seasons = []models.Season{}
 	}
 	
-	// Фильтрация и поиск
-	search := r.URL.Query().Get("search")
-	filtered := tournaments
-	if search != "" {
-		filtered = []models.Tournament{}
-		searchLower := strings.ToLower(search)
-		for _, t := range tournaments {
-			if strings.Contains(strings.ToLower(t.Name), searchLower) ||
-				strings.Contains(strings.ToLower(t.Status), searchLower) {
-				filtered = append(filtered, t)
+		// Фильтрация и поиск
+		search := r.URL.Query().Get("search")
+		filtered := tournaments
+		if search != "" {
+			filtered = []models.Tournament{}
+			searchLower := strings.ToLower(search)
+			for _, t := range tournaments {
+				statusName := ""
+				if t.Status != nil {
+					statusName = t.Status.Name
+				}
+				if strings.Contains(strings.ToLower(t.Name), searchLower) ||
+					strings.Contains(strings.ToLower(statusName), searchLower) {
+					filtered = append(filtered, t)
+				}
 			}
 		}
-	}
 	
 	// Убеждаемся, что filtered не nil
 	if filtered == nil {
@@ -1084,8 +1144,10 @@ func (h *Handlers) PerformancesList(w http.ResponseWriter, r *http.Request) {
 		}
 		
 		// Фильтр по позиции
-		if filterPosition != "" && perf.Position != filterPosition {
-			continue
+		if filterPosition != "" {
+			if perf.Position == nil || (perf.Position.Code != filterPosition && perf.Position.Name != filterPosition) {
+				continue
+			}
 		}
 		
 		// Фильтр по жюри
@@ -1198,8 +1260,14 @@ func (h *Handlers) CreatePerformance(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		roundID, _ := strconv.Atoi(r.FormValue("round_id"))
 		participantID, _ := strconv.Atoi(r.FormValue("participant_id"))
-		position := r.FormValue("position")
+		position := r.FormValue("position") // Получаем 'За' или 'Против'
 		judgeID, _ := strconv.Atoi(r.FormValue("judge_id"))
+
+		// Конвертируем 'За' -> 'for', 'Против' -> 'against'
+		positionCode := "for"
+		if position == "Против" || position == "against" {
+			positionCode = "against"
+		}
 
 		var logicScore, rhetoricScore, eruditionScore *int
 		if ls := r.FormValue("logic_score"); ls != "" {
@@ -1215,7 +1283,7 @@ func (h *Handlers) CreatePerformance(w http.ResponseWriter, r *http.Request) {
 			eruditionScore = &val
 		}
 
-		_, err := h.repo.CreatePerformance(roundID, participantID, position, logicScore, rhetoricScore, eruditionScore, judgeID)
+		_, err := h.repo.CreatePerformance(roundID, participantID, positionCode, logicScore, rhetoricScore, eruditionScore, judgeID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -1251,7 +1319,15 @@ func (h *Handlers) UpdatePerformance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// GET - показать форму редактирования
 	performances, _ := h.repo.GetPerformances()
+	participants, _ := h.repo.GetParticipants()
+	judges, _ := h.repo.GetJudges()
+	rounds, _ := h.repo.GetRounds()
+	topics, _ := h.repo.GetTopics()
+	tournaments, _ := h.repo.GetTournaments()
+	seasons, _ := h.repo.GetSeasons()
+	
 	var performance *models.Performance
 	for _, p := range performances {
 		if p.ID == id {
@@ -1263,7 +1339,48 @@ func (h *Handlers) UpdatePerformance(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Performance not found", http.StatusNotFound)
 		return
 	}
-	http.Redirect(w, r, "/performances", http.StatusSeeOther)
+	
+	// Убеждаемся, что все массивы не nil
+	if performances == nil {
+		performances = []models.Performance{}
+	}
+	if participants == nil {
+		participants = []models.Participant{}
+	}
+	if judges == nil {
+		judges = []models.Judge{}
+	}
+	if rounds == nil {
+		rounds = []models.Round{}
+	}
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	
+	data := map[string]interface{}{
+		"Performances": performances,
+		"Participants": participants,
+		"Judges":       judges,
+		"Rounds":       rounds,
+		"Topics":       topics,
+		"Tournaments":  tournaments,
+		"Seasons":      seasons,
+		"Performance":  performance,
+		"EditMode":     true,
+		"Search":       "",
+		"TotalCount":   len(performances),
+		"FilteredCount": len(performances),
+	}
+	if err := h.templates.ExecuteTemplate(w, "performances.html", data); err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handlers) DeletePerformance(w http.ResponseWriter, r *http.Request) {

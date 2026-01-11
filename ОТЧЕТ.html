@@ -1,0 +1,3318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пояснительная записка к курсовому проекту</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td { font-family: Arial, sans-serif !important; }
+    </style>
+    <![endif]-->
+    <style>
+        @page {
+            margin: 2cm 1.5cm 2cm 3cm;
+        }
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 14pt;
+            line-height: 1.5;
+            text-align: justify;
+            margin: 0;
+            padding: 20pt;
+        }
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 20pt 0 10pt 0;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 16pt 0 8pt 0;
+            page-break-after: avoid;
+        }
+        h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 12pt 0 6pt 1.25cm;
+            page-break-after: avoid;
+        }
+        p {
+            margin: 6pt 0;
+            text-indent: 1.25cm;
+        }
+        .no-indent {
+            text-indent: 0;
+        }
+        .screenshot-placeholder {
+            border: 2px dashed #999;
+            padding: 40pt;
+            text-align: center;
+            margin: 20pt 0;
+            background-color: #f9f9f9;
+            color: #666;
+            font-style: italic;
+            page-break-inside: avoid;
+            min-height: 300px;
+        }
+        pre {
+            font-family: "Courier New", monospace;
+            font-size: 10pt;
+            background-color: #f5f5f5;
+            padding: 10pt;
+            border: 1px solid #ddd;
+            border-radius: 5pt;
+            overflow-x: auto;
+            page-break-inside: avoid;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            font-family: "Courier New", monospace;
+            font-size: 10pt;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10pt 0;
+            font-size: 12pt;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5pt;
+            text-align: left;
+        }
+        th {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        .toc {
+            margin: 20pt 0;
+        }
+        .toc-item {
+            margin: 5pt 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>ПОЯСНИТЕЛЬНАЯ ЗАПИСКА</h1>
+<h1>К КУРСОВОМУ ПРОЕКТУ</h1>
+<h1>по дисциплине "Проектирование баз данных"</h1>
+
+<p class="no-indent" style="margin-top: 30pt; text-align: right;">
+Выполнил: [Ваше ФИО]<br>
+Группа: [Ваша группа]<br>
+Руководитель: [ФИО преподавателя]<br>
+[Год]
+</p>
+
+<div style="page-break-before: always;"></div>
+
+<h1>СОДЕРЖАНИЕ</h1>
+
+<div class="toc">
+<p class="toc-item"><strong>1. ВВЕДЕНИЕ</strong></p>
+<p class="toc-item"><strong>2. ТЕОРЕТИЧЕСКИЕ СВЕДЕНИЯ</strong></p>
+<p class="toc-item"><strong>3. ОПИСАНИЕ ВЫПОЛНЕНИЯ ЗАДАНИЯ</strong></p>
+<p class="toc-item"><strong>4. МОДЕЛЬ ДАННЫХ</strong></p>
+<p class="toc-item"><strong>5. РЕЗУЛЬТАТЫ ВЫПОЛНЕНИЯ</strong></p>
+<p class="toc-item"><strong>6. ВЫВОДЫ</strong></p>
+<p class="toc-item"><strong>ПРИЛОЖЕНИЯ</strong></p>
+<p class="toc-item" style="margin-left: 20pt;">Приложение А. Код разработанного ПО</p>
+<p class="toc-item" style="margin-left: 20pt;">Приложение Б. SQL-запросы</p>
+<p class="toc-item" style="margin-left: 20pt;">Приложение В. HTML-шаблоны</p>
+</div>
+
+<div style="page-break-before: always;"></div>
+
+<h1>1. ВВЕДЕНИЕ</h1>
+
+<p>В рамках курсового проекта по дисциплине "Проектирование баз данных" была разработана информационная система для управления дискуссионным клубом. Система предназначена для автоматизации процессов организации и проведения дебатов, учета участников, жюри, тем обсуждений, проведения турниров и обработки результатов.</p>
+
+<p>Целью работы является проектирование и реализация базы данных для системы управления дискуссионным клубом с использованием PostgreSQL, а также разработка веб-приложения на языке Go для обеспечения удобного интерфейса пользователя.</p>
+
+<p>Основные задачи проекта:</p>
+<ul>
+<li>Проектирование нормализованной модели данных;</li>
+<li>Создание структуры базы данных в PostgreSQL;</li>
+<li>Реализация триггеров и функций для обеспечения целостности данных;</li>
+<li>Разработка аналитических запросов для получения статистики;</li>
+<li>Создание веб-приложения с пользовательским интерфейсом;</li>
+<li>Реализация функционала управления участниками, жюри, темами, сезонами, турнирами, раундами и выступлениями.</li>
+</ul>
+
+<div style="page-break-before: always;"></div>
+
+<h1>2. ТЕОРЕТИЧЕСКИЕ СВЕДЕНИЯ</h1>
+
+<h2>2.1. Нормализация базы данных</h2>
+
+<p>Нормализация базы данных — процесс организации данных в таблицах для устранения избыточности и зависимостей, обеспечивающий целостность данных и эффективность работы СУБД. В проекте применена нормализация до BCNF (Boyce-Codd Normal Form).</p>
+
+<h2>2.2. Триггеры и функции в PostgreSQL</h2>
+
+<p>Триггеры в PostgreSQL — специальные функции, автоматически выполняющиеся при определенных событиях (INSERT, UPDATE, DELETE). В проекте использованы триггеры для:</p>
+<ul>
+<li>Автоматического обновления статусов турниров;</li>
+<li>Валидации данных при вставке и обновлении записей;</li>
+<li>Логирования изменений участников;</li>
+<li>Автоматической установки даты создания записей.</li>
+</ul>
+
+<p>Функции PostgreSQL позволяют инкапсулировать бизнес-логику на уровне базы данных. В проекте реализованы функции для расчета итогового балла выступления и обновления статусов всех турниров.</p>
+
+<h2>2.3. Веб-разработка на Go</h2>
+
+<p>Go (Golang) — язык программирования, разработанный Google. В проекте использован пакет <code>net/http</code> для создания веб-сервера и <code>html/template</code> для генерации HTML-страниц. Архитектура приложения следует паттерну MVC (Model-View-Controller).</p>
+
+<div style="page-break-before: always;"></div>
+
+<h1>3. ОПИСАНИЕ ВЫПОЛНЕНИЯ ЗАДАНИЯ</h1>
+
+<h2>3.1. Проектирование модели данных</h2>
+
+<p>Модель данных спроектирована с учетом требований предметной области. Выделены следующие сущности:</p>
+<ul>
+<li><strong>Участники</strong> — информация о людях, участвующих в дебатах;</li>
+<li><strong>Жюри</strong> — члены жюри, оценивающие выступления;</li>
+<li><strong>Темы</strong> — темы для обсуждения в дебатах;</li>
+<li><strong>Сезоны</strong> — временные периоды проведения турниров;</li>
+<li><strong>Турниры</strong> — мероприятия, объединяющие несколько раундов;</li>
+<li><strong>Раунды</strong> — отдельные дебаты в рамках турнира;</li>
+<li><strong>Выступления</strong> — записи о выступлениях участников с оценками.</li>
+</ul>
+
+<h2>3.2. Создание структуры базы данных</h2>
+
+<p>База данных создана в PostgreSQL с использованием кириллических имен таблиц и столбцов. Для каждой таблицы определены:</p>
+<ul>
+<li>Первичные ключи (SERIAL);</li>
+<li>Внешние ключи для обеспечения ссылочной целостности;</li>
+<li>Ограничения CHECK для валидации данных;</li>
+<li>Уникальные ограничения для предотвращения дублирования;</li>
+<li>Индексы для оптимизации запросов.</li>
+</ul>
+
+<h2>3.3. Реализация триггеров и функций</h2>
+
+<p>Реализованы следующие триггеры:</p>
+<ul>
+<li><code>update_tournament_status</code> — автоматически обновляет статус турнира при изменении дат;</li>
+<li><code>validate_performance_scores</code> — проверяет корректность оценок (диапазон 1-10);</li>
+<li><code>validate_round_number</code> — обеспечивает уникальность номера раунда в турнире;</li>
+<li><code>set_created_at</code> — автоматически устанавливает дату создания записи;</li>
+<li><code>log_participant_changes</code> — логирует изменения в таблице участников.</li>
+</ul>
+
+<p>Реализованы функции:</p>
+<ul>
+<li><code>расчет_итогового_балла</code> — вычисляет сумму трех оценок (логика, риторика, эрудиция);</li>
+<li><code>обновить_все_статусы_турниров</code> — обновляет статусы всех турниров на основе текущей даты.</li>
+</ul>
+
+<h2>3.4. Разработка аналитических запросов</h2>
+
+<p>Реализованы следующие аналитические запросы (а-з):</p>
+<ul>
+<li><strong>а)</strong> Список всех участников турнира с указанием их команды по каждой теме;</li>
+<li><strong>б)</strong> Итоговые результаты турнира (рейтинг участников по сумме баллов);</li>
+<li><strong>в)</strong> Статистика побед "За" и "Против" по каждой теме;</li>
+<li><strong>г)</strong> Рейтинг участников по сумме баллов за все турниры текущего сезона;</li>
+<li><strong>д)</strong> Средняя оценка каждого участника по каждому критерию;</li>
+<li><strong>е)</strong> Список членов жюри, участвовавших в наибольшем количестве турниров;</li>
+<li><strong>ж)</strong> Список тем, использованных более одного раза за сезон;</li>
+<li><strong>з)</strong> Расписание турнира с указанием тем и участников.</li>
+</ul>
+
+<h2>3.5. Разработка веб-приложения</h2>
+
+<p>Веб-приложение реализовано на языке Go с использованием стандартной библиотеки. Архитектура включает:</p>
+<ul>
+<li><strong>Models</strong> — структуры данных (internal/models/models.go);</li>
+<li><strong>Repository</strong> — слой доступа к данным (internal/repository/repository.go);</li>
+<li><strong>Handlers</strong> — обработчики HTTP-запросов (internal/handlers/handlers.go);</li>
+<li><strong>Templates</strong> — HTML-шаблоны для отображения страниц.</li>
+</ul>
+
+<p>Реализованы следующие функции:</p>
+<ul>
+<li>CRUD-операции для всех сущностей;</li>
+<li>Поиск и фильтрация данных;</li>
+<li>Отображение статистики и аналитики;</li>
+<li>Валидация входящих данных;</li>
+<li>Обработка ошибок.</li>
+</ul>
+
+<div style="page-break-before: always;"></div>
+
+<h1>4. МОДЕЛЬ ДАННЫХ</h1>
+
+<h2>4.1. ER-диаграмма</h2>
+
+<p class="no-indent">На рисунке 4.1 приведена ER-диаграмма базы данных, спроектированная с использованием ERWin.</p>
+
+<div class="screenshot-placeholder">
+    <p style="margin-top: 20pt;">[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ ER-ДИАГРАММЫ ИЗ ERWIN]</p>
+    <p style="font-size: 10pt;">Масштаб должен быть таким, чтобы все элементы диаграммы были хорошо видны при масштабе страницы 100%</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 4.1 — ER-диаграмма базы данных</strong></p>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 4.1 — ER-диаграмма базы данных</strong></p>
+
+<h2>4.2. Описание сущностей</h2>
+
+<p><strong>Таблица "участники"</strong> — хранит информацию об участниках дискуссионного клуба:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>имя (VARCHAR(100)) — имя участника;</li>
+<li>фамилия (VARCHAR(100)) — фамилия участника;</li>
+<li>электронная_почта (VARCHAR(255) UNIQUE) — электронная почта (уникальная);</li>
+<li>дата_создания (TIMESTAMP) — дата создания записи.</li>
+</ul>
+
+<p><strong>Таблица "жюри"</strong> — хранит информацию о членах жюри:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>имя, фамилия, электронная_почта (аналогично участникам);</li>
+<li>дата_создания.</li>
+</ul>
+
+<p><strong>Таблица "темы"</strong> — хранит темы для обсуждения:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>заголовок (VARCHAR(255));</li>
+<li>описание (TEXT);</li>
+<li>дата_создания.</li>
+</ul>
+
+<p><strong>Таблица "сезоны"</strong> — временные периоды:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>название (VARCHAR(255));</li>
+<li>дата_начала, дата_окончания (DATE);</li>
+<li>дата_создания.</li>
+</ul>
+
+<p><strong>Таблица "турниры"</strong> — мероприятия в рамках сезонов:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>ид_сезона (INTEGER REFERENCES сезоны(ид));</li>
+<li>название (VARCHAR(255));</li>
+<li>дата_начала (DATE);</li>
+<li>дата_окончания (DATE, может быть NULL);</li>
+<li>статус (VARCHAR(50) CHECK IN ('предстоящий', 'активный', 'завершен'));</li>
+<li>дата_создания.</li>
+</ul>
+
+<p><strong>Таблица "раунды"</strong> — отдельные дебаты в турнирах:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>ид_турнира (INTEGER REFERENCES турниры(ид));</li>
+<li>ид_темы (INTEGER REFERENCES темы(ид));</li>
+<li>номер_раунда (INTEGER);</li>
+<li>дата_раунда (DATE);</li>
+<li>дата_создания.</li>
+</ul>
+
+<p><strong>Таблица "выступления"</strong> — записи о выступлениях участников:</p>
+<ul>
+<li>ид (SERIAL PRIMARY KEY);</li>
+<li>ид_раунда (INTEGER REFERENCES раунды(ид));</li>
+<li>ид_участника (INTEGER REFERENCES участники(ид));</li>
+<li>позиция (VARCHAR(20) CHECK IN ('За', 'Против'));</li>
+<li>оценка_логики, оценка_риторики, оценка_эрудиции (INTEGER, могут быть NULL);</li>
+<li>ид_судьи (INTEGER REFERENCES жюри(ид));</li>
+<li>дата_создания.</li>
+</ul>
+
+<h2>4.3. Нормализация</h2>
+
+<p>База данных нормализована до BCNF:</p>
+<ul>
+<li>Каждая таблица имеет первичный ключ;</li>
+<li>Все атрибуты полностью зависят от первичного ключа;</li>
+<li>Нет транзитивных зависимостей;</li>
+<li>Все детерминанты являются потенциальными ключами.</li>
+</ul>
+
+<div style="page-break-before: always;"></div>
+
+<h1>5. РЕЗУЛЬТАТЫ ВЫПОЛНЕНИЯ</h1>
+
+<h2>5.1. Структура базы данных</h2>
+
+<p class="no-indent">На рисунке 5.1 приведена структура таблиц базы данных в PostgreSQL.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРУКТУРЫ ТАБЛИЦ ИЗ pgAdmin ИЛИ psql]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.1 — Структура таблиц в PostgreSQL</strong></p>
+
+<h2>5.2. Данные в таблицах</h2>
+
+<p class="no-indent">На рисунке 5.2 приведен пример данных в таблице "участники".</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ ДАННЫХ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.2 — Пример данных в таблице "участники"</strong></p>
+
+<h2>5.3. Работа триггеров</h2>
+
+<p class="no-indent">На рисунке 5.3 приведена демонстрация работы триггера обновления статуса турнира.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ: ДО и ПОСЛЕ обновления даты турнира]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.3 — Демонстрация работы триггера обновления статуса турнира</strong></p>
+
+<h2>5.4. Веб-интерфейс</h2>
+
+<p class="no-indent">На рисунке 5.4 приведена главная страница веб-приложения.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ ГЛАВНОЙ СТРАНИЦЫ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.4 — Главная страница веб-приложения</strong></p>
+
+<p class="no-indent">На рисунке 5.5 приведена страница управления участниками.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ УЧАСТНИКОВ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.5 — Страница управления участниками</strong></p>
+
+<p class="no-indent">На рисунке 5.6 приведена страница управления жюри.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ ЖЮРИ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.6 — Страница управления жюри</strong></p>
+
+<p class="no-indent">На рисунке 5.7 приведена страница тем дебатов.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ ТЕМ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.7 — Страница тем дебатов</strong></p>
+
+<p class="no-indent">На рисунке 5.8 приведена страница сезонов.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ СЕЗОНОВ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.8 — Страница сезонов</strong></p>
+
+<p class="no-indent">На рисунке 5.9 приведена страница турниров.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ ТУРНИРОВ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.9 — Страница турниров</strong></p>
+
+<p class="no-indent">На рисунке 5.10 приведена страница раундов.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ РАУНДОВ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.10 — Страница раундов</strong></p>
+
+<p class="no-indent">На рисунке 5.11 приведена страница выступлений.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ СТРАНИЦЫ ВЫСТУПЛЕНИЙ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.11 — Страница выступлений</strong></p>
+
+<h2>5.5. Аналитические запросы</h2>
+
+<p class="no-indent">На рисунке 5.12 приведены результаты запроса а) — список участников турнира с указанием их команды по каждой теме.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.12 — Результаты запроса а) Участники турнира по темам</strong></p>
+
+<p class="no-indent">На рисунке 5.13 приведены результаты запроса б) — итоговые результаты турнира.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.13 — Результаты запроса б) Итоговые результаты турнира</strong></p>
+
+<p class="no-indent">На рисунке 5.14 приведены результаты запроса в) — статистика побед "За" и "Против" по каждой теме.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.14 — Результаты запроса в) Статистика побед по темам</strong></p>
+
+<p class="no-indent">На рисунке 5.15 приведены результаты запроса г) — рейтинг участников по сумме баллов за все турниры текущего сезона.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.15 — Результаты запроса г) Рейтинг участников за сезон</strong></p>
+
+<p class="no-indent">На рисунке 5.16 приведены результаты запроса д) — средняя оценка каждого участника по каждому критерию.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.16 — Результаты запроса д) Средние оценки по критериям</strong></p>
+
+<p class="no-indent">На рисунке 5.17 приведены результаты запроса е) — список членов жюри, участвовавших в наибольшем количестве турниров.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.17 — Результаты запроса е) Жюри по количеству турниров</strong></p>
+
+<p class="no-indent">На рисунке 5.18 приведены результаты запроса ж) — список тем, использованных более одного раза за сезон.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.18 — Результаты запроса ж) Повторяющиеся темы за сезон</strong></p>
+
+<p class="no-indent">На рисунке 5.19 приведены результаты запроса з) — расписание турнира с указанием тем и участников.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ РЕЗУЛЬТАТОВ ЗАПРОСА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.19 — Результаты запроса з) Расписание турнира</strong></p>
+
+<h2>5.6. Формы создания и редактирования</h2>
+
+<p class="no-indent">На рисунке 5.20 приведена форма создания нового участника.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ ФОРМЫ]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.20 — Форма создания нового участника</strong></p>
+
+<p class="no-indent">На рисунке 5.21 приведены результаты поиска и фильтрации данных.</p>
+
+<div class="screenshot-placeholder">
+    <p>[ЗДЕСЬ ВСТАВИТЬ СКРИНШОТ ПОИСКА]</p>
+</div>
+
+<p class="no-indent" style="text-align: center; margin-top: 10pt;"><strong>Рисунок 5.21 — Результаты поиска и фильтрации</strong></p>
+
+<div style="page-break-before: always;"></div>
+
+<h1>6. ВЫВОДЫ</h1>
+
+<p>В ходе выполнения курсового проекта была спроектирована и реализована информационная система для управления дискуссионным клубом. Основные результаты работы:</p>
+
+<ul>
+<li>Спроектирована нормализованная модель данных в BCNF с использованием ERWin;</li>
+<li>Создана база данных в PostgreSQL с полной структурой, триггерами и функциями;</li>
+<li>Реализованы все требуемые аналитические запросы (а-з) с использованием оконных функций, CTE и агрегации;</li>
+<li>Разработано веб-приложение на Go с полнофункциональным пользовательским интерфейсом;</li>
+<li>Обеспечена целостность данных через внешние ключи, ограничения и триггеры;</li>
+<li>Реализованы функции поиска и фильтрации для удобной работы с данными.</li>
+</ul>
+
+<p>Система позволяет эффективно управлять участниками, жюри, темами, сезонами, турнирами, раундами и выступлениями, а также получать различную аналитическую информацию для принятия решений.</p>
+
+<p>В будущем систему можно расширить следующими функциями:</p>
+<ul>
+<li>Система авторизации и ролей пользователей;</li>
+<li>Экспорт данных в различные форматы (Excel, PDF);</li>
+<li>Визуализация статистики с помощью графиков и диаграмм;</li>
+<li>Email-уведомления участникам и жюри;</li>
+<li>Мобильная версия интерфейса.</li>
+</ul>
+
+<div style="page-break-before: always;"></div>
+
+<h1>ПРИЛОЖЕНИЯ</h1>
+
+<h2>Приложение А. Код разработанного ПО</h2>
+
+<h3>А.1. main.go</h3>
+
+<pre>package main
+
+import (
+	&quot;debate-club/internal/database&quot;
+	&quot;debate-club/internal/handlers&quot;
+	&quot;debate-club/internal/repository&quot;
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+	&quot;os&quot;
+
+	&quot;github.com/joho/godotenv&quot;
+)
+
+func main() {
+	// Загружаем переменные окружения из .env файла
+	if err := godotenv.Load(); err != nil {
+		log.Println(&quot;Файл .env не найден, используются переменные окружения системы&quot;)
+	}
+
+	// Параметры подключения к БД
+	dbHost := flag.String(&quot;dbhost&quot;, getEnv(&quot;DB_HOST&quot;, &quot;localhost&quot;), &quot;Database host&quot;)
+	dbPort := flag.String(&quot;dbport&quot;, getEnv(&quot;DB_PORT&quot;, &quot;5432&quot;), &quot;Database port&quot;)
+	dbUser := flag.String(&quot;dbuser&quot;, getEnv(&quot;DB_USER&quot;, &quot;postgres&quot;), &quot;Database user&quot;)
+	dbPassword := flag.String(&quot;dbpassword&quot;, getEnv(&quot;DB_PASSWORD&quot;, &quot;&quot;), &quot;Database password&quot;)
+	dbName := flag.String(&quot;dbname&quot;, getEnv(&quot;DB_NAME&quot;, &quot;debate_club&quot;), &quot;Database name&quot;)
+	port := flag.String(&quot;port&quot;, getEnv(&quot;PORT&quot;, &quot;8080&quot;), &quot;Server port&quot;)
+	flag.Parse()
+
+	// Если пароль не указан, пытаемся получить из переменной окружения
+	if *dbPassword == &quot;&quot; {
+		*dbPassword = os.Getenv(&quot;DB_PASSWORD&quot;)
+	}
+
+	// Строка подключения к PostgreSQL
+	connStr := fmt.Sprintf(&quot;host=%s port=%s user=%s password=%s dbname=%s sslmode=disable&quot;,
+		*dbHost, *dbPort, *dbUser, *dbPassword, *dbName)
+
+	// Подключение к БД
+	db, err := database.NewDB(connStr)
+	if err != nil {
+		log.Fatalf(&quot;Failed to connect to database: %v&quot;, err)
+	}
+	defer db.Close()
+
+	// Создание репозитория и обработчиков
+	repo := repository.NewRepository(db.DB)
+	h, err := handlers.NewHandlers(repo)
+	if err != nil {
+		log.Fatalf(&quot;Failed to create handlers: %v&quot;, err)
+	}
+
+	// Настройка маршрутов
+	mux := http.NewServeMux()
+
+	// Статические файлы (если нужны)
+	fs := http.FileServer(http.Dir(&quot;static&quot;))
+	mux.Handle(&quot;/static/&quot;, http.StripPrefix(&quot;/static/&quot;, fs))
+
+	// Главная страница
+	mux.HandleFunc(&quot;/&quot;, h.Home)
+
+	// Участники
+	mux.HandleFunc(&quot;/participants&quot;, h.ParticipantsList)
+	mux.HandleFunc(&quot;/participants/create&quot;, h.CreateParticipant)
+	mux.HandleFunc(&quot;/participants/update&quot;, h.UpdateParticipant)
+	mux.HandleFunc(&quot;/participants/delete&quot;, h.DeleteParticipant)
+
+	// Жюри
+	mux.HandleFunc(&quot;/judges&quot;, h.JudgesList)
+	mux.HandleFunc(&quot;/judges/create&quot;, h.CreateJudge)
+	mux.HandleFunc(&quot;/judges/update&quot;, h.UpdateJudge)
+	mux.HandleFunc(&quot;/judges/delete&quot;, h.DeleteJudge)
+
+	// Темы
+	mux.HandleFunc(&quot;/topics&quot;, h.TopicsList)
+	mux.HandleFunc(&quot;/topics/create&quot;, h.CreateTopic)
+	mux.HandleFunc(&quot;/topics/update&quot;, h.UpdateTopic)
+	mux.HandleFunc(&quot;/topics/delete&quot;, h.DeleteTopic)
+
+	// Сезоны
+	mux.HandleFunc(&quot;/seasons&quot;, h.SeasonsList)
+	mux.HandleFunc(&quot;/seasons/create&quot;, h.CreateSeason)
+	mux.HandleFunc(&quot;/seasons/update&quot;, h.UpdateSeason)
+	mux.HandleFunc(&quot;/seasons/delete&quot;, h.DeleteSeason)
+	mux.HandleFunc(&quot;/seasons/details&quot;, h.SeasonDetails)
+
+	// Турниры
+	mux.HandleFunc(&quot;/tournaments&quot;, h.TournamentsList)
+	mux.HandleFunc(&quot;/tournaments/create&quot;, h.CreateTournament)
+	mux.HandleFunc(&quot;/tournaments/update&quot;, h.UpdateTournament)
+	mux.HandleFunc(&quot;/tournaments/delete&quot;, h.DeleteTournament)
+	mux.HandleFunc(&quot;/tournaments/details&quot;, h.TournamentDetailsPage)
+	mux.HandleFunc(&quot;/tournaments/&quot;, h.TournamentDetails) // Обрабатывает /tournaments/{id}/results и /tournaments/{id}/schedule
+
+	// Раунды
+	mux.HandleFunc(&quot;/rounds&quot;, h.RoundsList)
+	mux.HandleFunc(&quot;/rounds/create&quot;, h.CreateRound)
+	mux.HandleFunc(&quot;/rounds/update&quot;, h.UpdateRound)
+	mux.HandleFunc(&quot;/rounds/delete&quot;, h.DeleteRound)
+	mux.HandleFunc(&quot;/rounds/details&quot;, h.RoundDetails)
+
+	// Выступления
+	mux.HandleFunc(&quot;/performances&quot;, h.PerformancesList)
+	mux.HandleFunc(&quot;/performances/create&quot;, h.CreatePerformance)
+	mux.HandleFunc(&quot;/performances/update&quot;, h.UpdatePerformance)
+	mux.HandleFunc(&quot;/performances/delete&quot;, h.DeletePerformance)
+
+	// Запросы
+	mux.HandleFunc(&quot;/queries&quot;, h.Queries)
+
+	log.Printf(&quot;Server starting on port %s&quot;, *port)
+	log.Printf(&quot;Database: %s@%s:%s/%s&quot;, *dbUser, *dbHost, *dbPort, *dbName)
+	if err := http.ListenAndServe(&quot;:&quot;+*port, mux); err != nil {
+		log.Fatalf(&quot;Server failed: %v&quot;, err)
+	}
+}
+
+// getEnv получает переменную окружения или возвращает значение по умолчанию
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != &quot;&quot; {
+		return value
+	}
+	return defaultValue
+}
+
+</pre>
+
+<h3>А.2. internal/models/models.go</h3>
+
+<pre>package models
+
+import &quot;time&quot;
+
+type Participant struct {
+	ID        int       `json:&quot;id&quot;`
+	FirstName string    `json:&quot;first_name&quot;`
+	LastName  string    `json:&quot;last_name&quot;`
+	Email     string    `json:&quot;email&quot;`
+	CreatedAt time.Time `json:&quot;created_at&quot;`
+}
+
+type Judge struct {
+	ID        int       `json:&quot;id&quot;`
+	FirstName string    `json:&quot;first_name&quot;`
+	LastName  string    `json:&quot;last_name&quot;`
+	Email     string    `json:&quot;email&quot;`
+	CreatedAt time.Time `json:&quot;created_at&quot;`
+}
+
+type Topic struct {
+	ID          int       `json:&quot;id&quot;`
+	Title       string    `json:&quot;title&quot;`
+	Description string    `json:&quot;description&quot;`
+	CreatedAt   time.Time `json:&quot;created_at&quot;`
+}
+
+type Season struct {
+	ID        int       `json:&quot;id&quot;`
+	Name      string    `json:&quot;name&quot;`
+	StartDate time.Time `json:&quot;start_date&quot;`
+	EndDate   time.Time `json:&quot;end_date&quot;`
+	CreatedAt time.Time `json:&quot;created_at&quot;`
+}
+
+type Tournament struct {
+	ID        int       `json:&quot;id&quot;`
+	SeasonID  int       `json:&quot;season_id&quot;`
+	Name      string    `json:&quot;name&quot;`
+	StartDate time.Time `json:&quot;start_date&quot;`
+	EndDate   *time.Time `json:&quot;end_date,omitempty&quot;`
+	Status    string    `json:&quot;status&quot;`
+	CreatedAt time.Time `json:&quot;created_at&quot;`
+}
+
+type Round struct {
+	ID          int       `json:&quot;id&quot;`
+	TournamentID int      `json:&quot;tournament_id&quot;`
+	TopicID     int       `json:&quot;topic_id&quot;`
+	RoundNumber int       `json:&quot;round_number&quot;`
+	RoundDate   time.Time `json:&quot;round_date&quot;`
+	CreatedAt   time.Time `json:&quot;created_at&quot;`
+}
+
+type Performance struct {
+	ID             int    `json:&quot;id&quot;`
+	RoundID        int    `json:&quot;round_id&quot;`
+	ParticipantID  int    `json:&quot;participant_id&quot;`
+	Position       string `json:&quot;position&quot;` // &quot;За&quot; or &quot;Против&quot;
+	LogicScore     *int   `json:&quot;logic_score&quot;`
+	RhetoricScore  *int   `json:&quot;rhetoric_score&quot;`
+	EruditionScore *int   `json:&quot;erudition_score&quot;`
+	JudgeID        int    `json:&quot;judge_id&quot;`
+	CreatedAt      time.Time `json:&quot;created_at&quot;`
+}
+
+type TournamentParticipant struct {
+	ParticipantID int    `json:&quot;participant_id&quot;`
+	FirstName     string `json:&quot;first_name&quot;`
+	LastName      string `json:&quot;last_name&quot;`
+	TopicID       int    `json:&quot;topic_id&quot;`
+	TopicTitle    string `json:&quot;topic_title&quot;`
+	Position      string `json:&quot;position&quot;`
+}
+
+type TournamentResult struct {
+	Place         int    `json:&quot;place&quot;`
+	ParticipantID int    `json:&quot;participant_id&quot;`
+	FirstName     string `json:&quot;first_name&quot;`
+	LastName      string `json:&quot;last_name&quot;`
+	TotalScore    int    `json:&quot;total_score&quot;`
+}
+
+type TopicWinStats struct {
+	TopicID    int    `json:&quot;topic_id&quot;`
+	TopicTitle string `json:&quot;topic_title&quot;`
+	ForWins    int    `json:&quot;for_wins&quot;`
+	AgainstWins int  `json:&quot;against_wins&quot;`
+}
+
+type ParticipantRating struct {
+	ParticipantID int    `json:&quot;participant_id&quot;`
+	FirstName     string `json:&quot;first_name&quot;`
+	LastName      string `json:&quot;last_name&quot;`
+	TotalScore    int    `json:&quot;total_score&quot;`
+}
+
+type AverageScores struct {
+	ParticipantID int     `json:&quot;participant_id&quot;`
+	FirstName     string  `json:&quot;first_name&quot;`
+	LastName      string  `json:&quot;last_name&quot;`
+	AvgLogic      float64 `json:&quot;avg_logic&quot;`
+	AvgRhetoric   float64 `json:&quot;avg_rhetoric&quot;`
+	AvgErudition  float64 `json:&quot;avg_erudition&quot;`
+}
+
+type JudgeTournamentCount struct {
+	JudgeID   int    `json:&quot;judge_id&quot;`
+	FirstName string `json:&quot;first_name&quot;`
+	LastName  string `json:&quot;last_name&quot;`
+	Count     int    `json:&quot;count&quot;`
+}
+
+type RepeatedTopic struct {
+	TopicID    int    `json:&quot;topic_id&quot;`
+	TopicTitle string `json:&quot;topic_title&quot;`
+	UsageCount int    `json:&quot;usage_count&quot;`
+}
+
+type TournamentSchedule struct {
+	RoundNumber int       `json:&quot;round_number&quot;`
+	RoundDate   time.Time `json:&quot;round_date&quot;`
+	TopicTitle  string    `json:&quot;topic_title&quot;`
+	Participants string   `json:&quot;participants&quot;`
+}
+
+</pre>
+
+<h3>А.3. internal/database/db.go</h3>
+
+<pre>package database
+
+import (
+	&quot;database/sql&quot;
+	&quot;fmt&quot;
+	&quot;log&quot;
+
+	_ &quot;github.com/lib/pq&quot;
+)
+
+type DB struct {
+	*sql.DB
+}
+
+func NewDB(connStr string) (*DB, error) {
+	db, err := sql.Open(&quot;postgres&quot;, connStr)
+	if err != nil {
+		return nil, fmt.Errorf(&quot;failed to open database: %w&quot;, err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf(&quot;failed to ping database: %w&quot;, err)
+	}
+
+	log.Println(&quot;Database connection established&quot;)
+	return &amp;DB{db}, nil
+}
+
+func (db *DB) Close() error {
+	return db.DB.Close()
+}
+
+</pre>
+
+<h3>А.4. internal/repository/repository.go</h3>
+
+<pre>package repository
+
+import (
+	&quot;database/sql&quot;
+	&quot;debate-club/internal/models&quot;
+	&quot;time&quot;
+)
+
+type Repository struct {
+	db *sql.DB
+}
+
+func NewRepository(db *sql.DB) *Repository {
+	return &amp;Repository{db: db}
+}
+
+// Участники
+func (r *Repository) CreateParticipant(firstName, lastName, email string) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO участники (имя, фамилия, электронная_почта) VALUES ($1, $2, $3) RETURNING ид&quot;,
+		firstName, lastName, email,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetParticipants() ([]models.Participant, error) {
+	rows, err := r.db.Query(&quot;SELECT ид, имя, фамилия, электронная_почта, дата_создания FROM участники ORDER BY ид&quot;)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var participants []models.Participant
+	for rows.Next() {
+		var p models.Participant
+		if err := rows.Scan(&amp;p.ID, &amp;p.FirstName, &amp;p.LastName, &amp;p.Email, &amp;p.CreatedAt); err != nil {
+			return nil, err
+		}
+		participants = append(participants, p)
+	}
+	return participants, rows.Err()
+}
+
+func (r *Repository) UpdateParticipant(id int, firstName, lastName, email string) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE участники SET имя = $1, фамилия = $2, электронная_почта = $3 WHERE ид = $4&quot;,
+		firstName, lastName, email, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteParticipant(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM участники WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Жюри
+func (r *Repository) CreateJudge(firstName, lastName, email string) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO жюри (имя, фамилия, электронная_почта) VALUES ($1, $2, $3) RETURNING ид&quot;,
+		firstName, lastName, email,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetJudges() ([]models.Judge, error) {
+	rows, err := r.db.Query(&quot;SELECT ид, имя, фамилия, электронная_почта, дата_создания FROM жюри ORDER BY ид&quot;)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var judges []models.Judge
+	for rows.Next() {
+		var j models.Judge
+		if err := rows.Scan(&amp;j.ID, &amp;j.FirstName, &amp;j.LastName, &amp;j.Email, &amp;j.CreatedAt); err != nil {
+			return nil, err
+		}
+		judges = append(judges, j)
+	}
+	return judges, rows.Err()
+}
+
+func (r *Repository) UpdateJudge(id int, firstName, lastName, email string) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE жюри SET имя = $1, фамилия = $2, электронная_почта = $3 WHERE ид = $4&quot;,
+		firstName, lastName, email, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteJudge(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM жюри WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Темы
+func (r *Repository) CreateTopic(title, description string) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO темы (заголовок, описание) VALUES ($1, $2) RETURNING ид&quot;,
+		title, description,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetTopics() ([]models.Topic, error) {
+	rows, err := r.db.Query(&quot;SELECT ид, заголовок, описание, дата_создания FROM темы ORDER BY ид&quot;)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var topics []models.Topic
+	for rows.Next() {
+		var t models.Topic
+		if err := rows.Scan(&amp;t.ID, &amp;t.Title, &amp;t.Description, &amp;t.CreatedAt); err != nil {
+			return nil, err
+		}
+		topics = append(topics, t)
+	}
+	return topics, rows.Err()
+}
+
+func (r *Repository) GetTopicByID(id int) (*models.Topic, error) {
+	var t models.Topic
+	err := r.db.QueryRow(&quot;SELECT ид, заголовок, описание, дата_создания FROM темы WHERE ид = $1&quot;, id).
+		Scan(&amp;t.ID, &amp;t.Title, &amp;t.Description, &amp;t.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;t, nil
+}
+
+func (r *Repository) UpdateTopic(id int, title, description string) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE темы SET заголовок = $1, описание = $2 WHERE ид = $3&quot;,
+		title, description, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteTopic(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM темы WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Сезоны
+func (r *Repository) CreateSeason(name string, startDate, endDate time.Time) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO сезоны (название, дата_начала, дата_окончания) VALUES ($1, $2, $3) RETURNING ид&quot;,
+		name, startDate, endDate,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetSeasons() ([]models.Season, error) {
+	rows, err := r.db.Query(&quot;SELECT ид, название, дата_начала, дата_окончания, дата_создания FROM сезоны ORDER BY ид&quot;)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var seasons []models.Season
+	for rows.Next() {
+		var s models.Season
+		if err := rows.Scan(&amp;s.ID, &amp;s.Name, &amp;s.StartDate, &amp;s.EndDate, &amp;s.CreatedAt); err != nil {
+			return nil, err
+		}
+		seasons = append(seasons, s)
+	}
+	return seasons, rows.Err()
+}
+
+func (r *Repository) GetSeasonByID(id int) (*models.Season, error) {
+	var s models.Season
+	err := r.db.QueryRow(&quot;SELECT ид, название, дата_начала, дата_окончания, дата_создания FROM сезоны WHERE ид = $1&quot;, id).
+		Scan(&amp;s.ID, &amp;s.Name, &amp;s.StartDate, &amp;s.EndDate, &amp;s.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;s, nil
+}
+
+func (r *Repository) UpdateSeason(id int, name string, startDate, endDate time.Time) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE сезоны SET название = $1, дата_начала = $2, дата_окончания = $3 WHERE ид = $4&quot;,
+		name, startDate, endDate, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteSeason(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM сезоны WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Турниры
+func (r *Repository) CreateTournament(seasonID int, name string, startDate time.Time, endDate *time.Time) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO турниры (ид_сезона, название, дата_начала, дата_окончания) VALUES ($1, $2, $3, $4) RETURNING ид&quot;,
+		seasonID, name, startDate, endDate,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetTournaments() ([]models.Tournament, error) {
+	// Сначала обновляем статусы в базе данных
+	r.UpdateAllTournamentStatuses()
+	
+	rows, err := r.db.Query(`
+		SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания 
+		FROM турниры 
+		ORDER BY дата_начала DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tournaments []models.Tournament
+	for rows.Next() {
+		var t models.Tournament
+		if err := rows.Scan(&amp;t.ID, &amp;t.SeasonID, &amp;t.Name, &amp;t.StartDate, &amp;t.EndDate, &amp;t.Status, &amp;t.CreatedAt); err != nil {
+			return nil, err
+		}
+		tournaments = append(tournaments, t)
+	}
+	return tournaments, rows.Err()
+}
+
+func (r *Repository) GetTournamentByID(id int) (*models.Tournament, error) {
+	// Обновляем статус перед получением
+	r.UpdateAllTournamentStatuses()
+	
+	var t models.Tournament
+	err := r.db.QueryRow(&quot;SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания FROM турниры WHERE ид = $1&quot;, id).
+		Scan(&amp;t.ID, &amp;t.SeasonID, &amp;t.Name, &amp;t.StartDate, &amp;t.EndDate, &amp;t.Status, &amp;t.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;t, nil
+}
+
+func (r *Repository) UpdateTournament(id int, seasonID int, name string, startDate time.Time, endDate *time.Time) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE турниры SET ид_сезона = $1, название = $2, дата_начала = $3, дата_окончания = $4 WHERE ид = $5&quot;,
+		seasonID, name, startDate, endDate, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteTournament(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM турниры WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Раунды
+func (r *Repository) CreateRound(tournamentID, topicID, roundNumber int, roundDate time.Time) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		&quot;INSERT INTO раунды (ид_турнира, ид_темы, номер_раунда, дата_раунда) VALUES ($1, $2, $3, $4) RETURNING ид&quot;,
+		tournamentID, topicID, roundNumber, roundDate,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetRounds() ([]models.Round, error) {
+	rows, err := r.db.Query(`
+		SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания 
+		FROM раунды 
+		ORDER BY ид_турнира, номер_раунда
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rounds []models.Round
+	for rows.Next() {
+		var round models.Round
+		if err := rows.Scan(&amp;round.ID, &amp;round.TournamentID, &amp;round.TopicID, &amp;round.RoundNumber, &amp;round.RoundDate, &amp;round.CreatedAt); err != nil {
+			return nil, err
+		}
+		rounds = append(rounds, round)
+	}
+	return rounds, rows.Err()
+}
+
+func (r *Repository) GetRoundsByTournament(tournamentID int) ([]models.Round, error) {
+	rows, err := r.db.Query(`
+		SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания 
+		FROM раунды 
+		WHERE ид_турнира = $1
+		ORDER BY номер_раунда
+	`, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rounds []models.Round
+	for rows.Next() {
+		var round models.Round
+		if err := rows.Scan(&amp;round.ID, &amp;round.TournamentID, &amp;round.TopicID, &amp;round.RoundNumber, &amp;round.RoundDate, &amp;round.CreatedAt); err != nil {
+			return nil, err
+		}
+		rounds = append(rounds, round)
+	}
+	return rounds, rows.Err()
+}
+
+func (r *Repository) GetRoundByID(id int) (*models.Round, error) {
+	var round models.Round
+	err := r.db.QueryRow(&quot;SELECT ид, ид_турнира, ид_темы, номер_раунда, дата_раунда, дата_создания FROM раунды WHERE ид = $1&quot;, id).
+		Scan(&amp;round.ID, &amp;round.TournamentID, &amp;round.TopicID, &amp;round.RoundNumber, &amp;round.RoundDate, &amp;round.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;round, nil
+}
+
+func (r *Repository) GetRoundsCountByTournament(tournamentID int) (int, error) {
+	var count int
+	err := r.db.QueryRow(&quot;SELECT COUNT(*) FROM раунды WHERE ид_турнира = $1&quot;, tournamentID).Scan(&amp;count)
+	return count, err
+}
+
+func (r *Repository) UpdateRound(id int, tournamentID, topicID, roundNumber int, roundDate time.Time) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE раунды SET ид_турнира = $1, ид_темы = $2, номер_раунда = $3, дата_раунда = $4 WHERE ид = $5&quot;,
+		tournamentID, topicID, roundNumber, roundDate, id,
+	)
+	return err
+}
+
+func (r *Repository) DeleteRound(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM раунды WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Выступления
+func (r *Repository) CreatePerformance(roundID, participantID int, position string, logicScore, rhetoricScore, eruditionScore *int, judgeID int) (int, error) {
+	var id int
+	err := r.db.QueryRow(
+		`INSERT INTO выступления (ид_раунда, ид_участника, позиция, оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи) 
+		 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ид`,
+		roundID, participantID, position, logicScore, rhetoricScore, eruditionScore, judgeID,
+	).Scan(&amp;id)
+	return id, err
+}
+
+func (r *Repository) GetPerformances() ([]models.Performance, error) {
+	rows, err := r.db.Query(`
+		SELECT ид, ид_раунда, ид_участника, позиция, оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи, дата_создания 
+		FROM выступления 
+		ORDER BY ид
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var performances []models.Performance
+	for rows.Next() {
+		var p models.Performance
+		if err := rows.Scan(&amp;p.ID, &amp;p.RoundID, &amp;p.ParticipantID, &amp;p.Position, &amp;p.LogicScore, &amp;p.RhetoricScore, &amp;p.EruditionScore, &amp;p.JudgeID, &amp;p.CreatedAt); err != nil {
+			return nil, err
+		}
+		performances = append(performances, p)
+	}
+	return performances, rows.Err()
+}
+
+func (r *Repository) UpdatePerformance(id int, logicScore, rhetoricScore, eruditionScore *int) error {
+	_, err := r.db.Exec(
+		&quot;UPDATE выступления SET оценка_логики = $1, оценка_риторики = $2, оценка_эрудиции = $3 WHERE ид = $4&quot;,
+		logicScore, rhetoricScore, eruditionScore, id,
+	)
+	return err
+}
+
+func (r *Repository) DeletePerformance(id int) error {
+	_, err := r.db.Exec(&quot;DELETE FROM выступления WHERE ид = $1&quot;, id)
+	return err
+}
+
+// Запрос а) Список всех участников турнира с указанием их команды по каждой теме
+func (r *Repository) GetTournamentParticipants(tournamentID int) ([]models.TournamentParticipant, error) {
+	query := `
+		SELECT DISTINCT
+			у.ид as participant_id,
+			у.имя as first_name,
+			у.фамилия as last_name,
+			т.ид as topic_id,
+			т.заголовок as topic_title,
+			в.позиция as position
+		FROM участники у
+		JOIN выступления в ON у.ид = в.ид_участника
+		JOIN раунды р ON в.ид_раунда = р.ид
+		JOIN темы т ON р.ид_темы = т.ид
+		WHERE р.ид_турнира = $1
+		ORDER BY т.ид, у.ид
+	`
+	rows, err := r.db.Query(query, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.TournamentParticipant
+	for rows.Next() {
+		var tp models.TournamentParticipant
+		if err := rows.Scan(&amp;tp.ParticipantID, &amp;tp.FirstName, &amp;tp.LastName, &amp;tp.TopicID, &amp;tp.TopicTitle, &amp;tp.Position); err != nil {
+			return nil, err
+		}
+		results = append(results, tp)
+	}
+	return results, rows.Err()
+}
+
+// Запрос б) Итоговые результаты турнира
+func (r *Repository) GetTournamentResults(tournamentID int) ([]models.TournamentResult, error) {
+	query := `
+		SELECT 
+			у.ид as participant_id,
+			у.имя as first_name,
+			у.фамилия as last_name,
+			COALESCE(SUM(расчет_итогового_балла(в.оценка_логики, в.оценка_риторики, в.оценка_эрудиции)), 0) as total_score
+		FROM участники у
+		JOIN выступления в ON у.ид = в.ид_участника
+		JOIN раунды р ON в.ид_раунда = р.ид
+		WHERE р.ид_турнира = $1
+		GROUP BY у.ид, у.имя, у.фамилия
+		ORDER BY total_score DESC
+	`
+	rows, err := r.db.Query(query, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.TournamentResult
+	place := 1
+	for rows.Next() {
+		var tr models.TournamentResult
+		if err := rows.Scan(&amp;tr.ParticipantID, &amp;tr.FirstName, &amp;tr.LastName, &amp;tr.TotalScore); err != nil {
+			return nil, err
+		}
+		tr.Place = place
+		results = append(results, tr)
+		place++
+	}
+	return results, rows.Err()
+}
+
+// Запрос в) Статистика побед &quot;За&quot; и &quot;Против&quot; по каждой теме
+func (r *Repository) GetTopicsWhereAgainstWins() ([]models.TopicWinStats, error) {
+	query := `
+		WITH round_scores AS (
+			SELECT 
+				р.ид_темы,
+				р.ид as round_id,
+				в.позиция,
+				SUM(COALESCE(в.оценка_логики, 0) + COALESCE(в.оценка_риторики, 0) + COALESCE(в.оценка_эрудиции, 0)) as team_score
+			FROM выступления в
+			JOIN раунды р ON в.ид_раунда = р.ид
+			WHERE в.оценка_логики IS NOT NULL 
+			  AND в.оценка_риторики IS NOT NULL 
+			  AND в.оценка_эрудиции IS NOT NULL
+			GROUP BY р.ид_темы, р.ид, в.позиция
+		),
+		round_winners AS (
+			SELECT 
+				ид_темы,
+				round_id,
+				позиция,
+				team_score,
+				MAX(team_score) OVER (PARTITION BY ид_темы, round_id) as max_score
+			FROM round_scores
+		),
+		winners_only AS (
+			SELECT 
+				ид_темы,
+				round_id,
+				позиция,
+				team_score
+			FROM round_winners
+			WHERE team_score = max_score
+		),
+		wins_by_position AS (
+			SELECT 
+				ид_темы,
+				COUNT(DISTINCT CASE WHEN позиция = &#x27;За&#x27; THEN round_id END) as for_wins,
+				COUNT(DISTINCT CASE WHEN позиция = &#x27;Против&#x27; THEN round_id END) as against_wins
+			FROM winners_only
+			GROUP BY ид_темы
+		)
+		SELECT 
+			т.ид as topic_id,
+			т.заголовок as topic_title,
+			COALESCE(w.for_wins, 0) as for_wins,
+			COALESCE(w.against_wins, 0) as against_wins
+		FROM темы т
+		LEFT JOIN wins_by_position w ON т.ид = w.ид_темы
+		WHERE COALESCE(w.against_wins, 0) &gt; 0
+		ORDER BY against_wins DESC, т.ид
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.TopicWinStats
+	for rows.Next() {
+		var tws models.TopicWinStats
+		if err := rows.Scan(&amp;tws.TopicID, &amp;tws.TopicTitle, &amp;tws.ForWins, &amp;tws.AgainstWins); err != nil {
+			return nil, err
+		}
+		results = append(results, tws)
+	}
+	return results, rows.Err()
+}
+
+// Запрос г) Рейтинг участников по сумме баллов за все турниры текущего сезона
+func (r *Repository) GetParticipantRatingForSeason(seasonID int) ([]models.ParticipantRating, error) {
+	query := `
+		SELECT 
+			у.ид as participant_id,
+			у.имя as first_name,
+			у.фамилия as last_name,
+			COALESCE(SUM(расчет_итогового_балла(в.оценка_логики, в.оценка_риторики, в.оценка_эрудиции)), 0) as total_score
+		FROM участники у
+		INNER JOIN выступления в ON у.ид = в.ид_участника
+		INNER JOIN раунды р ON в.ид_раунда = р.ид
+		INNER JOIN турниры т ON р.ид_турнира = т.ид
+		WHERE т.ид_сезона = $1
+		GROUP BY у.ид, у.имя, у.фамилия
+		ORDER BY total_score DESC
+	`
+	rows, err := r.db.Query(query, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.ParticipantRating
+	for rows.Next() {
+		var pr models.ParticipantRating
+		if err := rows.Scan(&amp;pr.ParticipantID, &amp;pr.FirstName, &amp;pr.LastName, &amp;pr.TotalScore); err != nil {
+			return nil, err
+		}
+		results = append(results, pr)
+	}
+	return results, rows.Err()
+}
+
+// Запрос д) Средняя оценка каждого участника по каждому критерию
+func (r *Repository) GetAverageScores() ([]models.AverageScores, error) {
+	query := `
+		SELECT 
+			у.ид as participant_id,
+			у.имя as first_name,
+			у.фамилия as last_name,
+			ROUND(AVG(в.оценка_логики)::numeric, 2) as avg_logic,
+			ROUND(AVG(в.оценка_риторики)::numeric, 2) as avg_rhetoric,
+			ROUND(AVG(в.оценка_эрудиции)::numeric, 2) as avg_erudition
+		FROM участники у
+		LEFT JOIN выступления в ON у.ид = в.ид_участника
+		WHERE в.оценка_логики IS NOT NULL 
+		  AND в.оценка_риторики IS NOT NULL 
+		  AND в.оценка_эрудиции IS NOT NULL
+		GROUP BY у.ид, у.имя, у.фамилия
+		ORDER BY у.ид
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.AverageScores
+	for rows.Next() {
+		var as models.AverageScores
+		if err := rows.Scan(&amp;as.ParticipantID, &amp;as.FirstName, &amp;as.LastName, &amp;as.AvgLogic, &amp;as.AvgRhetoric, &amp;as.AvgErudition); err != nil {
+			return nil, err
+		}
+		results = append(results, as)
+	}
+	return results, rows.Err()
+}
+
+// Запрос е) Список членов жюри, участвовавших в наибольшем количестве турниров
+func (r *Repository) GetJudgesByTournamentCount() ([]models.JudgeTournamentCount, error) {
+	query := `
+		SELECT 
+			ж.ид as judge_id,
+			ж.имя as first_name,
+			ж.фамилия as last_name,
+			COUNT(DISTINCT р.ид_турнира) as count
+		FROM жюри ж
+		JOIN выступления в ON ж.ид = в.ид_судьи
+		JOIN раунды р ON в.ид_раунда = р.ид
+		GROUP BY ж.ид, ж.имя, ж.фамилия
+		ORDER BY count DESC
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.JudgeTournamentCount
+	for rows.Next() {
+		var jtc models.JudgeTournamentCount
+		if err := rows.Scan(&amp;jtc.JudgeID, &amp;jtc.FirstName, &amp;jtc.LastName, &amp;jtc.Count); err != nil {
+			return nil, err
+		}
+		results = append(results, jtc)
+	}
+	return results, rows.Err()
+}
+
+// Запрос ж) Список тем, использованных более одного раза за сезон
+func (r *Repository) GetRepeatedTopicsInSeason(seasonID int) ([]models.RepeatedTopic, error) {
+	query := `
+		SELECT 
+			т.ид as topic_id,
+			т.заголовок as topic_title,
+			COUNT(DISTINCT р.ид_турнира) as usage_count
+		FROM темы т
+		JOIN раунды р ON т.ид = р.ид_темы
+		JOIN турниры тур ON р.ид_турнира = тур.ид
+		WHERE тур.ид_сезона = $1
+		GROUP BY т.ид, т.заголовок
+		HAVING COUNT(DISTINCT р.ид_турнира) &gt; 1
+		ORDER BY usage_count DESC
+	`
+	rows, err := r.db.Query(query, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.RepeatedTopic
+	for rows.Next() {
+		var rt models.RepeatedTopic
+		if err := rows.Scan(&amp;rt.TopicID, &amp;rt.TopicTitle, &amp;rt.UsageCount); err != nil {
+			return nil, err
+		}
+		results = append(results, rt)
+	}
+	return results, rows.Err()
+}
+
+// Запрос з) Расписание турнира с указанием тем и участников
+func (r *Repository) GetTournamentSchedule(tournamentID int) ([]models.TournamentSchedule, error) {
+	query := `
+		SELECT 
+			р.номер_раунда,
+			р.дата_раунда,
+			т.заголовок as topic_title,
+			STRING_AGG(
+				у.имя || &#x27; &#x27; || у.фамилия || &#x27; (&#x27; || в.позиция || &#x27;)&#x27;,
+				&#x27;, &#x27;
+				ORDER BY в.позиция, у.фамилия
+			) as participants
+		FROM раунды р
+		JOIN темы т ON р.ид_темы = т.ид
+		LEFT JOIN выступления в ON р.ид = в.ид_раунда
+		LEFT JOIN участники у ON в.ид_участника = у.ид
+		WHERE р.ид_турнира = $1
+		GROUP BY р.номер_раунда, р.дата_раунда, т.заголовок
+		ORDER BY р.номер_раунда
+	`
+	rows, err := r.db.Query(query, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []models.TournamentSchedule
+	for rows.Next() {
+		var ts models.TournamentSchedule
+		if err := rows.Scan(&amp;ts.RoundNumber, &amp;ts.RoundDate, &amp;ts.TopicTitle, &amp;ts.Participants); err != nil {
+			return nil, err
+		}
+		results = append(results, ts)
+	}
+	return results, rows.Err()
+}
+
+// Получить участников сезона
+func (r *Repository) GetParticipantsBySeason(seasonID int) ([]models.Participant, error) {
+	query := `
+		SELECT DISTINCT у.ид, у.имя, у.фамилия, у.электронная_почта, у.дата_создания
+		FROM участники у
+		JOIN выступления в ON у.ид = в.ид_участника
+		JOIN раунды р ON в.ид_раунда = р.ид
+		JOIN турниры т ON р.ид_турнира = т.ид
+		WHERE т.ид_сезона = $1
+		ORDER BY у.фамилия, у.имя
+	`
+	rows, err := r.db.Query(query, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var participants []models.Participant
+	for rows.Next() {
+		var p models.Participant
+		if err := rows.Scan(&amp;p.ID, &amp;p.FirstName, &amp;p.LastName, &amp;p.Email, &amp;p.CreatedAt); err != nil {
+			return nil, err
+		}
+		participants = append(participants, p)
+	}
+	return participants, rows.Err()
+}
+
+// Получить турниры сезона
+func (r *Repository) GetTournamentsBySeason(seasonID int) ([]models.Tournament, error) {
+	// Обновляем статусы перед получением
+	r.UpdateAllTournamentStatuses()
+	
+	rows, err := r.db.Query(&quot;SELECT ид, ид_сезона, название, дата_начала, дата_окончания, статус, дата_создания FROM турниры WHERE ид_сезона = $1 ORDER BY дата_начала&quot;, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tournaments []models.Tournament
+	for rows.Next() {
+		var t models.Tournament
+		if err := rows.Scan(&amp;t.ID, &amp;t.SeasonID, &amp;t.Name, &amp;t.StartDate, &amp;t.EndDate, &amp;t.Status, &amp;t.CreatedAt); err != nil {
+			return nil, err
+		}
+		tournaments = append(tournaments, t)
+	}
+	return tournaments, rows.Err()
+}
+
+// Получить участников раунда
+func (r *Repository) GetParticipantsByRound(roundID int) ([]models.Participant, error) {
+	query := `
+		SELECT DISTINCT у.ид, у.имя, у.фамилия, у.электронная_почта, у.дата_создания
+		FROM участники у
+		JOIN выступления в ON у.ид = в.ид_участника
+		WHERE в.ид_раунда = $1
+		ORDER BY у.фамилия, у.имя
+	`
+	rows, err := r.db.Query(query, roundID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var participants []models.Participant
+	for rows.Next() {
+		var p models.Participant
+		if err := rows.Scan(&amp;p.ID, &amp;p.FirstName, &amp;p.LastName, &amp;p.Email, &amp;p.CreatedAt); err != nil {
+			return nil, err
+		}
+		participants = append(participants, p)
+	}
+	return participants, rows.Err()
+}
+
+// Обновить статусы всех турниров на основе текущей даты
+func (r *Repository) UpdateAllTournamentStatuses() error {
+	// Используем функцию из базы данных для обновления статусов
+	_, err := r.db.Exec(&quot;SELECT обновить_все_статусы_турниров()&quot;)
+	if err != nil {
+		// Если функция не существует, используем прямой UPDATE
+		_, err = r.db.Exec(`
+			UPDATE турниры
+			SET статус = CASE
+				WHEN дата_окончания IS NOT NULL AND дата_окончания &lt; CURRENT_DATE THEN &#x27;завершен&#x27;
+				WHEN дата_начала &lt;= CURRENT_DATE AND (дата_окончания IS NULL OR дата_окончания &gt;= CURRENT_DATE) THEN &#x27;активный&#x27;
+				ELSE &#x27;предстоящий&#x27;
+			END
+		`)
+	}
+	return err
+}
+</pre>
+
+<h3>А.5. internal/handlers/handlers.go</h3>
+
+<pre>package handlers
+
+import (
+	&quot;debate-club/internal/models&quot;
+	&quot;debate-club/internal/repository&quot;
+	&quot;fmt&quot;
+	&quot;html/template&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+	&quot;strconv&quot;
+	&quot;strings&quot;
+	&quot;time&quot;
+)
+
+type Handlers struct {
+	repo      *repository.Repository
+	templates *template.Template
+}
+
+func NewHandlers(repo *repository.Repository) (*Handlers, error) {
+	tmpl, err := template.New(&quot;&quot;).Funcs(template.FuncMap{
+		&quot;add&quot;:    func(a, b int) int { return a + b },
+		&quot;sub&quot;:    func(a, b int) int { return a - b },
+		&quot;mul&quot;:    func(a, b int) int { return a * b },
+		&quot;div&quot;:    func(a, b int) float64 { return float64(a) / float64(b) },
+		&quot;divFloat&quot;: func(a, b float64) float64 { return a / b },
+		&quot;printf&quot;: fmt.Sprintf,
+		&quot;deref&quot;: func(p *int) int {
+			if p == nil {
+				return 0
+			}
+			return *p
+		},
+		&quot;average&quot;: func(nums ...int) float64 {
+			if len(nums) == 0 {
+				return 0
+			}
+			sum := 0
+			count := 0
+			for _, n := range nums {
+				if n &gt; 0 {
+					sum += n
+					count++
+				}
+			}
+			if count == 0 {
+				return 0
+			}
+			return float64(sum) / float64(count)
+		},
+		&quot;averageScores&quot;: func(logic, rhetoric, erudition *int) float64 {
+			count := 0
+			sum := 0
+			if logic != nil &amp;&amp; *logic &gt; 0 {
+				sum += *logic
+				count++
+			}
+			if rhetoric != nil &amp;&amp; *rhetoric &gt; 0 {
+				sum += *rhetoric
+				count++
+			}
+			if erudition != nil &amp;&amp; *erudition &gt; 0 {
+				sum += *erudition
+				count++
+			}
+			if count == 0 {
+				return 0
+			}
+			return float64(sum) / float64(count)
+		},
+		&quot;gtFloat&quot;: func(a, b float64) bool {
+			return a &gt; b
+		},
+		&quot;getMapValue&quot;: func(m map[int]int, key int) int {
+			if m == nil {
+				return 0
+			}
+			if val, ok := m[key]; ok {
+				return val
+			}
+			return 0
+		},
+	}).ParseGlob(&quot;templates/*.html&quot;)
+	if err != nil {
+		return nil, err
+	}
+
+	return &amp;Handlers{
+		repo:      repo,
+		templates: tmpl,
+	}, nil
+}
+
+func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
+	// Получаем статистику для дашборда
+	participants, _ := h.repo.GetParticipants()
+	judges, _ := h.repo.GetJudges()
+	topics, _ := h.repo.GetTopics()
+	seasons, _ := h.repo.GetSeasons()
+	tournaments, _ := h.repo.GetTournaments()
+	rounds, _ := h.repo.GetRounds()
+	performances, _ := h.repo.GetPerformances()
+
+	// Убеждаемся, что все массивы не nil
+	if participants == nil {
+		participants = []models.Participant{}
+	}
+	if judges == nil {
+		judges = []models.Judge{}
+	}
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if rounds == nil {
+		rounds = []models.Round{}
+	}
+	if performances == nil {
+		performances = []models.Performance{}
+	}
+
+	// Берем последние 6 турниров, отсортированных по дате начала (по убыванию)
+	latestTournaments := tournaments
+	if len(latestTournaments) &gt; 6 {
+		latestTournaments = latestTournaments[:6]
+	}
+	
+	data := map[string]interface{}{
+		&quot;Stats&quot;: map[string]int{
+			&quot;Participants&quot;: len(participants),
+			&quot;Judges&quot;:        len(judges),
+			&quot;Topics&quot;:        len(topics),
+			&quot;Seasons&quot;:       len(seasons),
+			&quot;Tournaments&quot;:   len(tournaments),
+			&quot;Rounds&quot;:        len(rounds),
+			&quot;Performances&quot;:  len(performances),
+		},
+		&quot;LatestTournaments&quot;: latestTournaments,
+	}
+	
+	if err := h.templates.ExecuteTemplate(w, &quot;index.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// Участники
+func (h *Handlers) ParticipantsList(w http.ResponseWriter, r *http.Request) {
+	participants, err := h.repo.GetParticipants()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Получаем средние оценки для участников
+	avgScores, _ := h.repo.GetAverageScores()
+	avgScoresMap := make(map[int]models.AverageScores)
+	for _, as := range avgScores {
+		avgScoresMap[as.ParticipantID] = as
+	}
+	
+	// Убеждаемся, что participants не nil
+	if participants == nil {
+		participants = []models.Participant{}
+	}
+	
+	// Фильтрация и поиск
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filtered := participants
+	if search != &quot;&quot; {
+		filtered = []models.Participant{}
+		searchLower := strings.ToLower(search)
+		for _, p := range participants {
+			if strings.Contains(strings.ToLower(p.FirstName), searchLower) ||
+				strings.Contains(strings.ToLower(p.LastName), searchLower) ||
+				strings.Contains(strings.ToLower(p.Email), searchLower) {
+				filtered = append(filtered, p)
+			}
+		}
+	}
+	
+	// Убеждаемся, что filtered не nil
+	if filtered == nil {
+		filtered = []models.Participant{}
+	}
+	
+	// Получаем сообщения об ошибках/успехе из URL
+	errorMsg := &quot;&quot;
+	successMsg := &quot;&quot;
+	if r.URL.Query().Get(&quot;error&quot;) == &quot;email_exists&quot; {
+		email := r.URL.Query().Get(&quot;email&quot;)
+		errorMsg = fmt.Sprintf(&quot;Ошибка: Email &#x27;%s&#x27; уже используется другим участником. Пожалуйста, используйте другой email.&quot;, email)
+	}
+	if r.URL.Query().Get(&quot;success&quot;) == &quot;created&quot; {
+		successMsg = &quot;Участник успешно добавлен!&quot;
+	}
+	if r.URL.Query().Get(&quot;success&quot;) == &quot;updated&quot; {
+		successMsg = &quot;Участник успешно обновлен!&quot;
+	}
+	
+	data := map[string]interface{}{
+		&quot;Participants&quot;: filtered,
+		&quot;Search&quot;:       search,
+		&quot;TotalCount&quot;:   len(participants),
+		&quot;FilteredCount&quot;: len(filtered),
+		&quot;AvgScores&quot;:    avgScoresMap,
+		&quot;ErrorMsg&quot;:     errorMsg,
+		&quot;SuccessMsg&quot;:   successMsg,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;participants.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) CreateParticipant(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		firstName := r.FormValue(&quot;first_name&quot;)
+		lastName := r.FormValue(&quot;last_name&quot;)
+		email := r.FormValue(&quot;email&quot;)
+
+		_, err := h.repo.CreateParticipant(firstName, lastName, email)
+		if err != nil {
+			// Проверяем, является ли ошибка нарушением уникального ограничения
+			if strings.Contains(err.Error(), &quot;duplicate key value violates unique constraint&quot;) || 
+		   strings.Contains(err.Error(), &quot;участники_электронная_почта_уникальна&quot;) {
+				http.Redirect(w, r, &quot;/participants?error=email_exists&amp;email=&quot;+email, http.StatusSeeOther)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/participants?success=created&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/participants&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateParticipant(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		firstName := r.FormValue(&quot;first_name&quot;)
+		lastName := r.FormValue(&quot;last_name&quot;)
+		email := r.FormValue(&quot;email&quot;)
+
+		if err := h.repo.UpdateParticipant(id, firstName, lastName, email); err != nil {
+			// Проверяем, является ли ошибка нарушением уникального ограничения
+			if strings.Contains(err.Error(), &quot;duplicate key value violates unique constraint&quot;) || 
+		   strings.Contains(err.Error(), &quot;участники_электронная_почта_уникальна&quot;) {
+				http.Redirect(w, r, fmt.Sprintf(&quot;/participants?error=email_exists&amp;email=%s&amp;id=%d&quot;, email, id), http.StatusSeeOther)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/participants?success=updated&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	participants, err := h.repo.GetParticipants()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var participant *models.Participant
+	for _, p := range participants {
+		if p.ID == id {
+			participant = &amp;p
+			break
+		}
+	}
+	if participant == nil {
+		http.Error(w, &quot;Participant not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Participant&quot;:  participant,
+		&quot;Participants&quot;: participants,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(participants),
+		&quot;FilteredCount&quot;: len(participants),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;participants.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteParticipant(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteParticipant(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/participants&quot;, http.StatusSeeOther)
+}
+
+// Жюри
+func (h *Handlers) JudgesList(w http.ResponseWriter, r *http.Request) {
+	judges, err := h.repo.GetJudges()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Получаем количество турниров для каждого жюри
+	judgesByTournament, _ := h.repo.GetJudgesByTournamentCount()
+	judgeTournamentCount := make(map[int]int)
+	for _, jtc := range judgesByTournament {
+		judgeTournamentCount[jtc.JudgeID] = jtc.Count
+	}
+	
+	// Убеждаемся, что judges не nil
+	if judges == nil {
+		judges = []models.Judge{}
+	}
+	
+	// Фильтрация и поиск
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filtered := judges
+	if search != &quot;&quot; {
+		filtered = []models.Judge{}
+		searchLower := strings.ToLower(search)
+		for _, j := range judges {
+			if strings.Contains(strings.ToLower(j.FirstName), searchLower) ||
+				strings.Contains(strings.ToLower(j.LastName), searchLower) ||
+				strings.Contains(strings.ToLower(j.Email), searchLower) {
+				filtered = append(filtered, j)
+			}
+		}
+	}
+	
+	// Убеждаемся, что filtered не nil
+	if filtered == nil {
+		filtered = []models.Judge{}
+	}
+	
+	// Получаем сообщения об ошибках/успехе из URL
+	errorMsg := &quot;&quot;
+	successMsg := &quot;&quot;
+	if r.URL.Query().Get(&quot;error&quot;) == &quot;email_exists&quot; {
+		email := r.URL.Query().Get(&quot;email&quot;)
+		errorMsg = fmt.Sprintf(&quot;Ошибка: Email &#x27;%s&#x27; уже используется другим членом жюри. Пожалуйста, используйте другой email.&quot;, email)
+	}
+	if r.URL.Query().Get(&quot;success&quot;) == &quot;created&quot; {
+		successMsg = &quot;Член жюри успешно добавлен!&quot;
+	}
+	if r.URL.Query().Get(&quot;success&quot;) == &quot;updated&quot; {
+		successMsg = &quot;Член жюри успешно обновлен!&quot;
+	}
+	
+	data := map[string]interface{}{
+		&quot;Judges&quot;:              filtered,
+		&quot;Search&quot;:              search,
+		&quot;TotalCount&quot;:          len(judges),
+		&quot;FilteredCount&quot;:       len(filtered),
+		&quot;JudgeTournamentCount&quot;: judgeTournamentCount,
+		&quot;ErrorMsg&quot;:            errorMsg,
+		&quot;SuccessMsg&quot;:          successMsg,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;judges.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) CreateJudge(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		firstName := r.FormValue(&quot;first_name&quot;)
+		lastName := r.FormValue(&quot;last_name&quot;)
+		email := r.FormValue(&quot;email&quot;)
+
+		_, err := h.repo.CreateJudge(firstName, lastName, email)
+		if err != nil {
+			// Проверяем, является ли ошибка нарушением уникального ограничения
+			if strings.Contains(err.Error(), &quot;duplicate key value violates unique constraint&quot;) || 
+		   strings.Contains(err.Error(), &quot;жюри_электронная_почта_уникальна&quot;) {
+				http.Redirect(w, r, &quot;/judges?error=email_exists&amp;email=&quot;+email, http.StatusSeeOther)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/judges?success=created&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/judges&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateJudge(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		firstName := r.FormValue(&quot;first_name&quot;)
+		lastName := r.FormValue(&quot;last_name&quot;)
+		email := r.FormValue(&quot;email&quot;)
+
+		if err := h.repo.UpdateJudge(id, firstName, lastName, email); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/judges&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	judges, err := h.repo.GetJudges()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var judge *models.Judge
+	for _, j := range judges {
+		if j.ID == id {
+			judge = &amp;j
+			break
+		}
+	}
+	if judge == nil {
+		http.Error(w, &quot;Judge not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Judge&quot;:        judge,
+		&quot;Judges&quot;:       judges,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(judges),
+		&quot;FilteredCount&quot;: len(judges),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;judges.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteJudge(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteJudge(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/judges&quot;, http.StatusSeeOther)
+}
+
+// Темы
+func (h *Handlers) TopicsList(w http.ResponseWriter, r *http.Request) {
+	topics, err := h.repo.GetTopics()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Получаем статистику побед по темам
+	topicsWinStats, _ := h.repo.GetTopicsWhereAgainstWins()
+	topicsWinStatsMap := make(map[int]models.TopicWinStats)
+	for _, tws := range topicsWinStats {
+		topicsWinStatsMap[tws.TopicID] = tws
+	}
+	
+	// Убеждаемся, что topics не nil
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	
+	// Фильтрация и поиск
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filtered := topics
+	if search != &quot;&quot; {
+		filtered = []models.Topic{}
+		searchLower := strings.ToLower(search)
+		for _, t := range topics {
+			if strings.Contains(strings.ToLower(t.Title), searchLower) ||
+				strings.Contains(strings.ToLower(t.Description), searchLower) {
+				filtered = append(filtered, t)
+			}
+		}
+	}
+	
+	// Убеждаемся, что filtered не nil
+	if filtered == nil {
+		filtered = []models.Topic{}
+	}
+	
+	data := map[string]interface{}{
+		&quot;Topics&quot;:         filtered,
+		&quot;Search&quot;:         search,
+		&quot;TotalCount&quot;:     len(topics),
+		&quot;FilteredCount&quot;:  len(filtered),
+		&quot;TopicsWinStats&quot;: topicsWinStatsMap,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;topics.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) CreateTopic(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		title := r.FormValue(&quot;title&quot;)
+		description := r.FormValue(&quot;description&quot;)
+
+		_, err := h.repo.CreateTopic(title, description)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/topics&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/topics&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateTopic(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		title := r.FormValue(&quot;title&quot;)
+		description := r.FormValue(&quot;description&quot;)
+
+		if err := h.repo.UpdateTopic(id, title, description); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/topics&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	topics, err := h.repo.GetTopics()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var topic *models.Topic
+	for _, t := range topics {
+		if t.ID == id {
+			topic = &amp;t
+			break
+		}
+	}
+	if topic == nil {
+		http.Error(w, &quot;Topic not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Topic&quot;:        topic,
+		&quot;Topics&quot;:       topics,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(topics),
+		&quot;FilteredCount&quot;: len(topics),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;topics.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteTopic(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteTopic(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/topics&quot;, http.StatusSeeOther)
+}
+
+// Сезоны
+func (h *Handlers) SeasonsList(w http.ResponseWriter, r *http.Request) {
+	seasons, err := h.repo.GetSeasons()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Получаем рейтинг участников для каждого сезона
+	seasonRatings := make(map[int][]models.ParticipantRating)
+	for _, s := range seasons {
+		rating, _ := h.repo.GetParticipantRatingForSeason(s.ID)
+		if len(rating) &gt; 0 {
+			seasonRatings[s.ID] = rating[:min(3, len(rating))] // Топ-3
+		}
+	}
+	
+	// Убеждаемся, что seasons не nil
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	
+	// Фильтрация и поиск
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filtered := seasons
+	if search != &quot;&quot; {
+		filtered = []models.Season{}
+		searchLower := strings.ToLower(search)
+		for _, s := range seasons {
+			if strings.Contains(strings.ToLower(s.Name), searchLower) {
+				filtered = append(filtered, s)
+			}
+		}
+	}
+	
+	// Убеждаемся, что filtered не nil
+	if filtered == nil {
+		filtered = []models.Season{}
+	}
+	
+	data := map[string]interface{}{
+		&quot;Seasons&quot;:       filtered,
+		&quot;Search&quot;:        search,
+		&quot;TotalCount&quot;:    len(seasons),
+		&quot;FilteredCount&quot;: len(filtered),
+		&quot;SeasonRatings&quot;: seasonRatings,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;seasons.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func min(a, b int) int {
+	if a &lt; b {
+		return a
+	}
+	return b
+}
+
+func (h *Handlers) CreateSeason(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		name := r.FormValue(&quot;name&quot;)
+		startDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;start_date&quot;))
+		endDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;end_date&quot;))
+
+		_, err := h.repo.CreateSeason(name, startDate, endDate)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/seasons&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/seasons&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateSeason(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		name := r.FormValue(&quot;name&quot;)
+		startDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;start_date&quot;))
+		endDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;end_date&quot;))
+
+		if err := h.repo.UpdateSeason(id, name, startDate, endDate); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/seasons&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	seasons, err := h.repo.GetSeasons()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var season *models.Season
+	for _, s := range seasons {
+		if s.ID == id {
+			season = &amp;s
+			break
+		}
+	}
+	if season == nil {
+		http.Error(w, &quot;Season not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Seasons&quot;:      seasons,
+		&quot;Season&quot;:       season,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(seasons),
+		&quot;FilteredCount&quot;: len(seasons),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;seasons.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteSeason(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteSeason(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/seasons&quot;, http.StatusSeeOther)
+}
+
+// Турниры
+func (h *Handlers) TournamentsList(w http.ResponseWriter, r *http.Request) {
+	// Обновляем статусы турниров перед отображением
+	h.repo.UpdateAllTournamentStatuses()
+	
+	tournaments, err := h.repo.GetTournaments()
+	if err != nil {
+		log.Printf(&quot;Error getting tournaments: %v&quot;, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	log.Printf(&quot;Retrieved %d tournaments from database&quot;, len(tournaments))
+	
+	seasons, _ := h.repo.GetSeasons()
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	
+	// Фильтрация и поиск
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filtered := tournaments
+	if search != &quot;&quot; {
+		filtered = []models.Tournament{}
+		searchLower := strings.ToLower(search)
+		for _, t := range tournaments {
+			if strings.Contains(strings.ToLower(t.Name), searchLower) ||
+				strings.Contains(strings.ToLower(t.Status), searchLower) {
+				filtered = append(filtered, t)
+			}
+		}
+	}
+	
+	// Убеждаемся, что filtered не nil
+	if filtered == nil {
+		filtered = []models.Tournament{}
+	}
+	
+	log.Printf(&quot;After filtering: %d tournaments&quot;, len(filtered))
+	
+	// Получаем количество раундов для отфильтрованных турниров
+	tournamentRoundsCount := make(map[int]int)
+	for _, t := range filtered {
+		count, _ := h.repo.GetRoundsCountByTournament(t.ID)
+		tournamentRoundsCount[t.ID] = count
+	}
+	
+	data := map[string]interface{}{
+		&quot;Tournaments&quot;:        filtered,
+		&quot;Seasons&quot;:            seasons,
+		&quot;Search&quot;:             search,
+		&quot;TotalCount&quot;:         len(tournaments),
+		&quot;FilteredCount&quot;:      len(filtered),
+		&quot;TournamentRoundsCount&quot;: tournamentRoundsCount,
+	}
+	
+	log.Printf(&quot;TournamentsList: Sending data to template: %d tournaments (filtered), %d seasons&quot;, len(filtered), len(seasons))
+	log.Printf(&quot;TournamentsList: filtered is nil? %v, len=%d&quot;, filtered == nil, len(filtered))
+	if len(filtered) &gt; 0 {
+		log.Printf(&quot;TournamentsList: First tournament: %+v&quot;, filtered[0])
+	}
+	
+	if err := h.templates.ExecuteTemplate(w, &quot;tournaments.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handlers) CreateTournament(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		seasonID, _ := strconv.Atoi(r.FormValue(&quot;season_id&quot;))
+		name := r.FormValue(&quot;name&quot;)
+		startDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;start_date&quot;))
+		var endDate *time.Time
+		if ed := r.FormValue(&quot;end_date&quot;); ed != &quot;&quot; {
+			parsed, _ := time.Parse(&quot;2006-01-02&quot;, ed)
+			endDate = &amp;parsed
+		}
+
+		_, err := h.repo.CreateTournament(seasonID, name, startDate, endDate)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/tournaments&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/tournaments&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateTournament(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		seasonID, _ := strconv.Atoi(r.FormValue(&quot;season_id&quot;))
+		name := r.FormValue(&quot;name&quot;)
+		startDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;start_date&quot;))
+		var endDate *time.Time
+		if ed := r.FormValue(&quot;end_date&quot;); ed != &quot;&quot; {
+			parsed, _ := time.Parse(&quot;2006-01-02&quot;, ed)
+			endDate = &amp;parsed
+		}
+
+		if err := h.repo.UpdateTournament(id, seasonID, name, startDate, endDate); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/tournaments&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	tournaments, _ := h.repo.GetTournaments()
+	seasons, _ := h.repo.GetSeasons()
+	var tournament *models.Tournament
+	for _, t := range tournaments {
+		if t.ID == id {
+			tournament = &amp;t
+			break
+		}
+	}
+	if tournament == nil {
+		http.Error(w, &quot;Tournament not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Tournaments&quot;:  tournaments,
+		&quot;Seasons&quot;:      seasons,
+		&quot;Tournament&quot;:   tournament,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(tournaments),
+		&quot;FilteredCount&quot;: len(tournaments),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;tournaments.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteTournament(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteTournament(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/tournaments&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) TournamentDetails(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	tournamentID, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if tournamentID == 0 {
+		// Пытаемся извлечь ID из пути /tournaments/{id}/results или /tournaments/{id}/schedule
+		parts := strings.Split(strings.Trim(path, &quot;/&quot;), &quot;/&quot;)
+		if len(parts) &gt;= 2 {
+			tournamentID, _ = strconv.Atoi(parts[1])
+		}
+	}
+	
+	if tournamentID == 0 {
+		http.Error(w, &quot;Tournament ID required&quot;, http.StatusBadRequest)
+		return
+	}
+	
+	tournaments, _ := h.repo.GetTournaments()
+	var tournament *models.Tournament
+	for _, t := range tournaments {
+		if t.ID == tournamentID {
+			tournament = &amp;t
+			break
+		}
+	}
+	if tournament == nil {
+		http.Error(w, &quot;Tournament not found&quot;, http.StatusNotFound)
+		return
+	}
+	
+	if strings.Contains(path, &quot;/results&quot;) {
+		// Показываем результаты турнира
+		results, _ := h.repo.GetTournamentResults(tournamentID)
+		data := map[string]interface{}{
+			&quot;Tournament&quot;: tournament,
+			&quot;Results&quot;:    results,
+			&quot;Title&quot;:      &quot;Итоговые результаты: &quot; + tournament.Name,
+		}
+		if err := h.templates.ExecuteTemplate(w, &quot;tournament_results.html&quot;, data); err != nil {
+			log.Printf(&quot;Template error: %v&quot;, err)
+		}
+	} else if strings.Contains(path, &quot;/schedule&quot;) {
+		// Показываем расписание турнира
+		schedule, _ := h.repo.GetTournamentSchedule(tournamentID)
+		data := map[string]interface{}{
+			&quot;Tournament&quot;: tournament,
+			&quot;Schedule&quot;:   schedule,
+			&quot;Title&quot;:      &quot;Расписание: &quot; + tournament.Name,
+		}
+		if err := h.templates.ExecuteTemplate(w, &quot;tournament_schedule.html&quot;, data); err != nil {
+			log.Printf(&quot;Template error: %v&quot;, err)
+		}
+	} else {
+		http.Error(w, &quot;Invalid path&quot;, http.StatusBadRequest)
+	}
+}
+
+// Раунды
+func (h *Handlers) RoundsList(w http.ResponseWriter, r *http.Request) {
+	rounds, err := h.repo.GetRounds()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tournaments, _ := h.repo.GetTournaments()
+	topics, _ := h.repo.GetTopics()
+	
+	// Поиск и фильтрация
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filterTournament := r.URL.Query().Get(&quot;tournament&quot;)
+	filterTopic := r.URL.Query().Get(&quot;topic&quot;)
+	filterDateFrom := r.URL.Query().Get(&quot;date_from&quot;)
+	filterDateTo := r.URL.Query().Get(&quot;date_to&quot;)
+	
+	var filtered []models.Round
+	for _, round := range rounds {
+		// Фильтр по турниру
+		if filterTournament != &quot;&quot; {
+			tournamentID, _ := strconv.Atoi(filterTournament)
+			if round.TournamentID != tournamentID {
+				continue
+			}
+		}
+		
+		// Фильтр по теме
+		if filterTopic != &quot;&quot; {
+			topicID, _ := strconv.Atoi(filterTopic)
+			if round.TopicID != topicID {
+				continue
+			}
+		}
+		
+		// Фильтр по дате от
+		if filterDateFrom != &quot;&quot; {
+			dateFrom, err := time.Parse(&quot;2006-01-02&quot;, filterDateFrom)
+			if err == nil &amp;&amp; round.RoundDate.Before(dateFrom) {
+				continue
+			}
+		}
+		
+		// Фильтр по дате до
+		if filterDateTo != &quot;&quot; {
+			dateTo, err := time.Parse(&quot;2006-01-02&quot;, filterDateTo)
+			if err == nil &amp;&amp; round.RoundDate.After(dateTo) {
+				continue
+			}
+		}
+		
+		// Текстовый поиск
+		if search != &quot;&quot; {
+			matched := false
+			searchLower := strings.ToLower(search)
+			// Поиск по названию турнира
+			for _, t := range tournaments {
+				if t.ID == round.TournamentID {
+					if strings.Contains(strings.ToLower(t.Name), searchLower) {
+						matched = true
+						break
+					}
+				}
+			}
+			// Поиск по теме
+			if !matched {
+				for _, topic := range topics {
+					if topic.ID == round.TopicID {
+						if strings.Contains(strings.ToLower(topic.Title+&quot; &quot;+topic.Description), searchLower) {
+							matched = true
+							break
+						}
+					}
+				}
+			}
+			// Поиск по номеру раунда
+			if !matched {
+				if strings.Contains(strings.ToLower(fmt.Sprintf(&quot;раунд %d&quot;, round.RoundNumber)), searchLower) {
+					matched = true
+				}
+			}
+			if !matched {
+				continue
+			}
+		}
+		
+		filtered = append(filtered, round)
+	}
+	
+	// Убеждаемся, что все массивы не nil
+	if filtered == nil {
+		filtered = []models.Round{}
+	}
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	
+	data := map[string]interface{}{
+		&quot;Rounds&quot;:           filtered,
+		&quot;Tournaments&quot;:      tournaments,
+		&quot;Topics&quot;:           topics,
+		&quot;Search&quot;:           search,
+		&quot;FilterTournament&quot;: filterTournament,
+		&quot;FilterTopic&quot;:      filterTopic,
+		&quot;FilterDateFrom&quot;:   filterDateFrom,
+		&quot;FilterDateTo&quot;:     filterDateTo,
+		&quot;TotalCount&quot;:       len(rounds),
+		&quot;FilteredCount&quot;:    len(filtered),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;rounds.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) CreateRound(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		tournamentID, _ := strconv.Atoi(r.FormValue(&quot;tournament_id&quot;))
+		topicID, _ := strconv.Atoi(r.FormValue(&quot;topic_id&quot;))
+		roundNumber, _ := strconv.Atoi(r.FormValue(&quot;round_number&quot;))
+		roundDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;round_date&quot;))
+
+		_, err := h.repo.CreateRound(tournamentID, topicID, roundNumber, roundDate)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/rounds&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/rounds&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdateRound(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		tournamentID, _ := strconv.Atoi(r.FormValue(&quot;tournament_id&quot;))
+		topicID, _ := strconv.Atoi(r.FormValue(&quot;topic_id&quot;))
+		roundNumber, _ := strconv.Atoi(r.FormValue(&quot;round_number&quot;))
+		roundDate, _ := time.Parse(&quot;2006-01-02&quot;, r.FormValue(&quot;round_date&quot;))
+
+		if err := h.repo.UpdateRound(id, tournamentID, topicID, roundNumber, roundDate); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/rounds&quot;, http.StatusSeeOther)
+		return
+	}
+	// GET - показать форму редактирования
+	rounds, _ := h.repo.GetRounds()
+	tournaments, _ := h.repo.GetTournaments()
+	topics, _ := h.repo.GetTopics()
+	var round *models.Round
+	for _, rd := range rounds {
+		if rd.ID == id {
+			round = &amp;rd
+			break
+		}
+	}
+	if round == nil {
+		http.Error(w, &quot;Round not found&quot;, http.StatusNotFound)
+		return
+	}
+	data := map[string]interface{}{
+		&quot;Rounds&quot;:      rounds,
+		&quot;Tournaments&quot;: tournaments,
+		&quot;Topics&quot;:      topics,
+		&quot;Round&quot;:       round,
+		&quot;EditMode&quot;:    true,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;rounds.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) DeleteRound(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeleteRound(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/rounds&quot;, http.StatusSeeOther)
+}
+
+// Выступления
+func (h *Handlers) PerformancesList(w http.ResponseWriter, r *http.Request) {
+	performances, err := h.repo.GetPerformances()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	participants, _ := h.repo.GetParticipants()
+	judges, _ := h.repo.GetJudges()
+	rounds, _ := h.repo.GetRounds()
+	topics, _ := h.repo.GetTopics()
+	tournaments, _ := h.repo.GetTournaments()
+	seasons, _ := h.repo.GetSeasons()
+	
+	// Поиск и фильтрация
+	search := r.URL.Query().Get(&quot;search&quot;)
+	filterParticipant := r.URL.Query().Get(&quot;participant&quot;)
+	filterTournament := r.URL.Query().Get(&quot;tournament&quot;)
+	filterTopic := r.URL.Query().Get(&quot;topic&quot;)
+	filterPosition := r.URL.Query().Get(&quot;position&quot;)
+	filterJudge := r.URL.Query().Get(&quot;judge&quot;)
+	
+	var filtered []models.Performance
+	for _, perf := range performances {
+		// Поиск по участнику
+		if filterParticipant != &quot;&quot; {
+			participantID, _ := strconv.Atoi(filterParticipant)
+			if perf.ParticipantID != participantID {
+				continue
+			}
+		}
+		
+		// Поиск по турниру
+		if filterTournament != &quot;&quot; {
+			tournamentID, _ := strconv.Atoi(filterTournament)
+			matched := false
+			for _, round := range rounds {
+				if round.ID == perf.RoundID &amp;&amp; round.TournamentID == tournamentID {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				continue
+			}
+		}
+		
+		// Поиск по теме
+		if filterTopic != &quot;&quot; {
+			topicID, _ := strconv.Atoi(filterTopic)
+			matched := false
+			for _, round := range rounds {
+				if round.ID == perf.RoundID &amp;&amp; round.TopicID == topicID {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				continue
+			}
+		}
+		
+		// Фильтр по позиции
+		if filterPosition != &quot;&quot; &amp;&amp; perf.Position != filterPosition {
+			continue
+		}
+		
+		// Фильтр по жюри
+		if filterJudge != &quot;&quot; {
+			judgeID, _ := strconv.Atoi(filterJudge)
+			if perf.JudgeID != judgeID {
+				continue
+			}
+		}
+		
+		// Текстовый поиск
+		if search != &quot;&quot; {
+			matched := false
+			searchLower := strings.ToLower(search)
+			// Поиск по имени участника
+			for _, p := range participants {
+				if p.ID == perf.ParticipantID {
+					if strings.Contains(strings.ToLower(p.FirstName+&quot; &quot;+p.LastName), searchLower) {
+						matched = true
+						break
+					}
+				}
+			}
+			// Поиск по названию турнира
+			if !matched {
+				for _, round := range rounds {
+					if round.ID == perf.RoundID {
+						for _, t := range tournaments {
+							if t.ID == round.TournamentID {
+								if strings.Contains(strings.ToLower(t.Name), searchLower) {
+									matched = true
+									break
+								}
+							}
+						}
+						break
+					}
+				}
+			}
+			// Поиск по теме
+			if !matched {
+				for _, round := range rounds {
+					if round.ID == perf.RoundID {
+						for _, topic := range topics {
+							if topic.ID == round.TopicID {
+								if strings.Contains(strings.ToLower(topic.Title+&quot; &quot;+topic.Description), searchLower) {
+									matched = true
+									break
+								}
+							}
+						}
+						break
+					}
+				}
+			}
+			if !matched {
+				continue
+			}
+		}
+		
+		filtered = append(filtered, perf)
+	}
+	
+	// Убеждаемся, что все массивы не nil
+	if filtered == nil {
+		filtered = []models.Performance{}
+	}
+	if participants == nil {
+		participants = []models.Participant{}
+	}
+	if judges == nil {
+		judges = []models.Judge{}
+	}
+	if rounds == nil {
+		rounds = []models.Round{}
+	}
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	
+	data := map[string]interface{}{
+		&quot;Performances&quot;: filtered,
+		&quot;Participants&quot;: participants,
+		&quot;Judges&quot;:       judges,
+		&quot;Rounds&quot;:       rounds,
+		&quot;Topics&quot;:       topics,
+		&quot;Tournaments&quot;:  tournaments,
+		&quot;Seasons&quot;:      seasons,
+		&quot;Search&quot;:       search,
+		&quot;FilterParticipant&quot;: filterParticipant,
+		&quot;FilterTournament&quot;: filterTournament,
+		&quot;FilterTopic&quot;:      filterTopic,
+		&quot;FilterPosition&quot;:    filterPosition,
+		&quot;FilterJudge&quot;:       filterJudge,
+		&quot;TotalCount&quot;:        len(performances),
+		&quot;FilteredCount&quot;:     len(filtered),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;performances.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+func (h *Handlers) CreatePerformance(w http.ResponseWriter, r *http.Request) {
+	if r.Method == &quot;POST&quot; {
+		roundID, _ := strconv.Atoi(r.FormValue(&quot;round_id&quot;))
+		participantID, _ := strconv.Atoi(r.FormValue(&quot;participant_id&quot;))
+		position := r.FormValue(&quot;position&quot;)
+		judgeID, _ := strconv.Atoi(r.FormValue(&quot;judge_id&quot;))
+
+		var logicScore, rhetoricScore, eruditionScore *int
+		if ls := r.FormValue(&quot;logic_score&quot;); ls != &quot;&quot; {
+			val, _ := strconv.Atoi(ls)
+			logicScore = &amp;val
+		}
+		if rs := r.FormValue(&quot;rhetoric_score&quot;); rs != &quot;&quot; {
+			val, _ := strconv.Atoi(rs)
+			rhetoricScore = &amp;val
+		}
+		if es := r.FormValue(&quot;erudition_score&quot;); es != &quot;&quot; {
+			val, _ := strconv.Atoi(es)
+			eruditionScore = &amp;val
+		}
+
+		_, err := h.repo.CreatePerformance(roundID, participantID, position, logicScore, rhetoricScore, eruditionScore, judgeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/performances&quot;, http.StatusSeeOther)
+		return
+	}
+	http.Redirect(w, r, &quot;/performances&quot;, http.StatusSeeOther)
+}
+
+func (h *Handlers) UpdatePerformance(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if r.Method == &quot;POST&quot; {
+		var logicScore, rhetoricScore, eruditionScore *int
+		if ls := r.FormValue(&quot;logic_score&quot;); ls != &quot;&quot; {
+			val, _ := strconv.Atoi(ls)
+			logicScore = &amp;val
+		}
+		if rs := r.FormValue(&quot;rhetoric_score&quot;); rs != &quot;&quot; {
+			val, _ := strconv.Atoi(rs)
+			rhetoricScore = &amp;val
+		}
+		if es := r.FormValue(&quot;erudition_score&quot;); es != &quot;&quot; {
+			val, _ := strconv.Atoi(es)
+			eruditionScore = &amp;val
+		}
+
+		if err := h.repo.UpdatePerformance(id, logicScore, rhetoricScore, eruditionScore); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, &quot;/performances&quot;, http.StatusSeeOther)
+		return
+	}
+
+	// GET - показать форму редактирования
+	performances, _ := h.repo.GetPerformances()
+	participants, _ := h.repo.GetParticipants()
+	judges, _ := h.repo.GetJudges()
+	rounds, _ := h.repo.GetRounds()
+	topics, _ := h.repo.GetTopics()
+	tournaments, _ := h.repo.GetTournaments()
+	seasons, _ := h.repo.GetSeasons()
+	
+	var performance *models.Performance
+	for _, p := range performances {
+		if p.ID == id {
+			performance = &amp;p
+			break
+		}
+	}
+	if performance == nil {
+		http.Error(w, &quot;Performance not found&quot;, http.StatusNotFound)
+		return
+	}
+	
+	// Убеждаемся, что все массивы не nil
+	if performances == nil {
+		performances = []models.Performance{}
+	}
+	if participants == nil {
+		participants = []models.Participant{}
+	}
+	if judges == nil {
+		judges = []models.Judge{}
+	}
+	if rounds == nil {
+		rounds = []models.Round{}
+	}
+	if topics == nil {
+		topics = []models.Topic{}
+	}
+	if tournaments == nil {
+		tournaments = []models.Tournament{}
+	}
+	if seasons == nil {
+		seasons = []models.Season{}
+	}
+	
+	data := map[string]interface{}{
+		&quot;Performances&quot;: performances,
+		&quot;Participants&quot;: participants,
+		&quot;Judges&quot;:       judges,
+		&quot;Rounds&quot;:       rounds,
+		&quot;Topics&quot;:       topics,
+		&quot;Tournaments&quot;:  tournaments,
+		&quot;Seasons&quot;:      seasons,
+		&quot;Performance&quot;:  performance,
+		&quot;EditMode&quot;:     true,
+		&quot;Search&quot;:       &quot;&quot;,
+		&quot;TotalCount&quot;:   len(performances),
+		&quot;FilteredCount&quot;: len(performances),
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;performances.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handlers) DeletePerformance(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	if err := h.repo.DeletePerformance(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, &quot;/performances&quot;, http.StatusSeeOther)
+}
+
+// Запросы - все объединены в один handler Queries
+
+func (h *Handlers) Queries(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get(&quot;q&quot;)
+	if q == &quot;&quot; {
+		if err := h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, nil); err != nil {
+			log.Printf(&quot;Template error: %v&quot;, err)
+		}
+		return
+	}
+
+	var results interface{}
+	var title string
+	var headers []string
+
+	switch q {
+	case &quot;a&quot;:
+		tournamentID, _ := strconv.Atoi(r.URL.Query().Get(&quot;tournament_id&quot;))
+		if tournamentID == 0 {
+			tournaments, _ := h.repo.GetTournaments()
+			data := map[string]interface{}{&quot;Tournaments&quot;: tournaments, &quot;Query&quot;: &quot;a&quot;}
+			h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data)
+			return
+		}
+		participants, _ := h.repo.GetTournamentParticipants(tournamentID)
+		title = &quot;Участники турнира по темам&quot;
+		headers = []string{&quot;ID&quot;, &quot;Имя&quot;, &quot;Фамилия&quot;, &quot;Тема&quot;, &quot;Позиция&quot;}
+		rows := make([][]interface{}, 0, len(participants))
+		for _, p := range participants {
+			rows = append(rows, []interface{}{p.ParticipantID, p.FirstName, p.LastName, p.TopicTitle, p.Position})
+		}
+		results = rows
+	case &quot;b&quot;:
+		tournamentID, _ := strconv.Atoi(r.URL.Query().Get(&quot;tournament_id&quot;))
+		if tournamentID == 0 {
+			tournaments, _ := h.repo.GetTournaments()
+			data := map[string]interface{}{&quot;Tournaments&quot;: tournaments, &quot;Query&quot;: &quot;b&quot;}
+			h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data)
+			return
+		}
+		tournamentResults, _ := h.repo.GetTournamentResults(tournamentID)
+		title = &quot;Итоговые результаты турнира&quot;
+		headers = []string{&quot;Место&quot;, &quot;Имя&quot;, &quot;Фамилия&quot;, &quot;Сумма баллов&quot;}
+		rows := make([][]interface{}, 0, len(tournamentResults))
+		for _, tr := range tournamentResults {
+			rows = append(rows, []interface{}{tr.Place, tr.FirstName, tr.LastName, tr.TotalScore})
+		}
+		results = rows
+	case &quot;c&quot;:
+		topicsWin, _ := h.repo.GetTopicsWhereAgainstWins()
+		title = &quot;Темы, где побеждает «против»&quot;
+		headers = []string{&quot;ID&quot;, &quot;Тема&quot;, &quot;Количество побед&quot;}
+		rows := make([][]interface{}, 0, len(topicsWin))
+		for _, t := range topicsWin {
+			rows = append(rows, []interface{}{t.TopicID, t.TopicTitle, t.AgainstWins})
+		}
+		results = rows
+	case &quot;d&quot;:
+		seasonID, _ := strconv.Atoi(r.URL.Query().Get(&quot;season_id&quot;))
+		if seasonID == 0 {
+			seasons, _ := h.repo.GetSeasons()
+			data := map[string]interface{}{&quot;Seasons&quot;: seasons, &quot;Query&quot;: &quot;d&quot;}
+			h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data)
+			return
+		}
+		ratings, _ := h.repo.GetParticipantRatingForSeason(seasonID)
+		title = &quot;Рейтинг участников за сезон&quot;
+		headers = []string{&quot;Имя&quot;, &quot;Фамилия&quot;, &quot;Сумма баллов&quot;}
+		rows := make([][]interface{}, 0, len(ratings))
+		for _, r := range ratings {
+			rows = append(rows, []interface{}{r.FirstName, r.LastName, r.TotalScore})
+		}
+		results = rows
+	case &quot;e&quot;:
+		avgScores, _ := h.repo.GetAverageScores()
+		title = &quot;Средние оценки по критериям&quot;
+		headers = []string{&quot;Имя&quot;, &quot;Фамилия&quot;, &quot;Логика&quot;, &quot;Риторика&quot;, &quot;Эрудиция&quot;}
+		rows := make([][]interface{}, 0, len(avgScores))
+		for _, a := range avgScores {
+			rows = append(rows, []interface{}{a.FirstName, a.LastName, fmt.Sprintf(&quot;%.2f&quot;, a.AvgLogic), fmt.Sprintf(&quot;%.2f&quot;, a.AvgRhetoric), fmt.Sprintf(&quot;%.2f&quot;, a.AvgErudition)})
+		}
+		results = rows
+	case &quot;f&quot;:
+		judgesCount, _ := h.repo.GetJudgesByTournamentCount()
+		title = &quot;Жюри по количеству турниров&quot;
+		headers = []string{&quot;Имя&quot;, &quot;Фамилия&quot;, &quot;Количество турниров&quot;}
+		rows := make([][]interface{}, 0, len(judgesCount))
+		for _, j := range judgesCount {
+			rows = append(rows, []interface{}{j.FirstName, j.LastName, j.Count})
+		}
+		results = rows
+	case &quot;g&quot;:
+		seasonID, _ := strconv.Atoi(r.URL.Query().Get(&quot;season_id&quot;))
+		if seasonID == 0 {
+			seasons, _ := h.repo.GetSeasons()
+			data := map[string]interface{}{&quot;Seasons&quot;: seasons, &quot;Query&quot;: &quot;g&quot;}
+			h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data)
+			return
+		}
+		repeated, _ := h.repo.GetRepeatedTopicsInSeason(seasonID)
+		title = &quot;Повторяющиеся темы за сезон&quot;
+		headers = []string{&quot;ID&quot;, &quot;Тема&quot;, &quot;Количество использований&quot;}
+		rows := make([][]interface{}, 0, len(repeated))
+		for _, rt := range repeated {
+			rows = append(rows, []interface{}{rt.TopicID, rt.TopicTitle, rt.UsageCount})
+		}
+		results = rows
+	case &quot;h&quot;:
+		tournamentID, _ := strconv.Atoi(r.URL.Query().Get(&quot;tournament_id&quot;))
+		if tournamentID == 0 {
+			tournaments, _ := h.repo.GetTournaments()
+			data := map[string]interface{}{&quot;Tournaments&quot;: tournaments, &quot;Query&quot;: &quot;h&quot;}
+			h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data)
+			return
+		}
+		schedule, _ := h.repo.GetTournamentSchedule(tournamentID)
+		title = &quot;Расписание турнира&quot;
+		headers = []string{&quot;Раунд&quot;, &quot;Дата&quot;, &quot;Тема&quot;, &quot;Участники&quot;}
+		rows := make([][]interface{}, 0, len(schedule))
+		for _, s := range schedule {
+			rows = append(rows, []interface{}{s.RoundNumber, s.RoundDate.Format(&quot;2006-01-02&quot;), s.TopicTitle, s.Participants})
+		}
+		results = rows
+	}
+
+	data := map[string]interface{}{
+		&quot;Title&quot;:   title,
+		&quot;Headers&quot;: headers,
+		&quot;Results&quot;: results,
+		&quot;Query&quot;:   q,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;queries.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+// Детальная страница сезона
+func (h *Handlers) SeasonDetails(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	season, _ := h.repo.GetSeasonByID(id)
+	if season == nil {
+		http.Error(w, &quot;Season not found&quot;, http.StatusNotFound)
+		return
+	}
+	
+	participants, _ := h.repo.GetParticipantsBySeason(id)
+	tournaments, _ := h.repo.GetTournamentsBySeason(id)
+	
+	// Получаем количество раундов для каждого турнира
+	tournamentRoundsCount := make(map[int]int)
+	for _, t := range tournaments {
+		count, _ := h.repo.GetRoundsCountByTournament(t.ID)
+		tournamentRoundsCount[t.ID] = count
+	}
+	
+	data := map[string]interface{}{
+		&quot;Season&quot;:              season,
+		&quot;Participants&quot;:        participants,
+		&quot;Tournaments&quot;:         tournaments,
+		&quot;TournamentRoundsCount&quot;: tournamentRoundsCount,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;season_details.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+// Детальная страница турнира (раунды)
+func (h *Handlers) TournamentDetailsPage(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	tournament, _ := h.repo.GetTournamentByID(id)
+	if tournament == nil {
+		http.Error(w, &quot;Tournament not found&quot;, http.StatusNotFound)
+		return
+	}
+	
+	rounds, _ := h.repo.GetRoundsByTournament(id)
+	topics, _ := h.repo.GetTopics()
+	topicsMap := make(map[int]models.Topic)
+	for _, t := range topics {
+		topicsMap[t.ID] = t
+	}
+	
+	data := map[string]interface{}{
+		&quot;Tournament&quot;: tournament,
+		&quot;Rounds&quot;:    rounds,
+		&quot;Topics&quot;:    topicsMap,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;tournament_details.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+
+// Детальная страница раунда (участники)
+func (h *Handlers) RoundDetails(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(r.URL.Query().Get(&quot;id&quot;))
+	round, _ := h.repo.GetRoundByID(id)
+	if round == nil {
+		http.Error(w, &quot;Round not found&quot;, http.StatusNotFound)
+		return
+	}
+	
+	participants, _ := h.repo.GetParticipantsByRound(id)
+	topic, _ := h.repo.GetTopicByID(round.TopicID)
+	tournament, _ := h.repo.GetTournamentByID(round.TournamentID)
+	
+	data := map[string]interface{}{
+		&quot;Round&quot;:        round,
+		&quot;Participants&quot;: participants,
+		&quot;Topic&quot;:        topic,
+		&quot;Tournament&quot;:   tournament,
+	}
+	if err := h.templates.ExecuteTemplate(w, &quot;round_details.html&quot;, data); err != nil {
+		log.Printf(&quot;Template error: %v&quot;, err)
+	}
+}
+</pre>
+
+<div style="page-break-before: always;"></div>
+
+<h2>Приложение Б. SQL-запросы</h2>
+
+<h3>Б.1. Создание таблиц (schema.sql)</h3>
+
+<div class="screenshot-placeholder">
+    <p><strong>[ЗДЕСЬ ВСТАВИТЬ SQL-КОД СОЗДАНИЯ ТАБЛИЦ]</strong></p>
+    <p>Если файл schema.sql существует, он должен быть включен здесь полностью</p>
+</div>
+
+<h3>Б.2. Триггеры и функции (triggers.sql)</h3>
+
+<div class="screenshot-placeholder">
+    <p><strong>[ЗДЕСЬ ВСТАВИТЬ SQL-КОД ТРИГГЕРОВ И ФУНКЦИЙ]</strong></p>
+    <p>Если файл triggers.sql существует, он должен быть включен здесь полностью</p>
+</div>
+
+<h3>Б.3. Аналитические запросы</h3>
+
+<pre>
+-- Запрос а) Список всех участников турнира с указанием их команды по каждой теме
+SELECT DISTINCT
+    у.ид as participant_id,
+    у.имя as first_name,
+    у.фамилия as last_name,
+    т.ид as topic_id,
+    т.заголовок as topic_title,
+    в.позиция as position
+FROM участники у
+JOIN выступления в ON у.ид = в.ид_участника
+JOIN раунды р ON в.ид_раунда = р.ид
+JOIN темы т ON р.ид_темы = т.ид
+WHERE р.ид_турнира = $1
+ORDER BY т.ид, у.ид;
+</pre>
+
+<p class="no-indent"><strong>Примечание:</strong> Полные SQL-запросы всех аналитических функций представлены в файле internal/repository/repository.go в методах GetTournamentParticipants, GetTournamentResults, GetTopicsWhereAgainstWins, GetParticipantRatingForSeason, GetAverageScores, GetJudgesByTournamentCount, GetRepeatedTopicsInSeason, GetTournamentSchedule.</p>
+
+<div style="page-break-before: always;"></div>
+
+<h2>Приложение В. HTML-шаблоны</h2>
+
+<p class="no-indent"><strong>Примечание:</strong> Все HTML-шаблоны находятся в директории templates/. Основные шаблоны:</p>
+<ul>
+<li>base.html — базовый шаблон с навигацией;</li>
+<li>index.html — главная страница;</li>
+<li>participants.html — управление участниками;</li>
+<li>judges.html — управление жюри;</li>
+<li>topics.html — управление темами;</li>
+<li>seasons.html — управление сезонами;</li>
+<li>tournaments.html — управление турнирами;</li>
+<li>rounds.html — управление раундами;</li>
+<li>performances.html — управление выступлениями;</li>
+<li>queries.html — страница аналитических запросов.</li>
+</ul>
+
+<div class="screenshot-placeholder">
+    <p><strong>[ЗДЕСЬ МОЖНО ВСТАВИТЬ КОД ОСНОВНЫХ ШАБЛОНОВ, ЕСЛИ ТРЕБУЕТСЯ]</strong></p>
+</div>
+
+<p class="no-indent" style="margin-top: 40pt; text-align: right;">
+[Ваше ФИО]<br>
+[Дата]
+</p>
+
+</body>
+</html>

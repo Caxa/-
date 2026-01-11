@@ -2,6 +2,26 @@ package models
 
 import "time"
 
+// Справочные таблицы (Reference Tables)
+
+type TournamentStatus struct {
+	ID          int       `json:"id"`
+	Code        string    `json:"code"`        // 'upcoming', 'active', 'completed'
+	Name        string    `json:"name"`        // 'Предстоящий', 'Активный', 'Завершен'
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type DebatePosition struct {
+	ID          int       `json:"id"`
+	Code        string    `json:"code"`        // 'for', 'against'
+	Name        string    `json:"name"`        // 'За', 'Против'
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+// Основные таблицы (Main Tables)
+
 type Participant struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"first_name"`
@@ -39,7 +59,8 @@ type Tournament struct {
 	Name      string    `json:"name"`
 	StartDate time.Time `json:"start_date"`
 	EndDate   *time.Time `json:"end_date,omitempty"`
-	Status    string    `json:"status"`
+	StatusID  int       `json:"status_id"` // Ссылка на tournament_statuses
+	Status    *TournamentStatus `json:"status,omitempty"` // Загружается отдельно
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -56,7 +77,8 @@ type Performance struct {
 	ID             int    `json:"id"`
 	RoundID        int    `json:"round_id"`
 	ParticipantID  int    `json:"participant_id"`
-	Position       string `json:"position"` // "За" or "Против"
+	PositionID     int    `json:"position_id"` // Ссылка на debate_positions
+	Position       *DebatePosition `json:"position,omitempty"` // Загружается отдельно
 	LogicScore     *int   `json:"logic_score"`
 	RhetoricScore  *int   `json:"rhetoric_score"`
 	EruditionScore *int   `json:"erudition_score"`
@@ -122,5 +144,16 @@ type TournamentSchedule struct {
 	RoundDate   time.Time `json:"round_date"`
 	TopicTitle  string    `json:"topic_title"`
 	Participants string   `json:"participants"`
+}
+
+// Дополнительные структуры для запросов
+
+type ParticipantAudit struct {
+	ID           int       `json:"id"`
+	ParticipantID int      `json:"participant_id"`
+	Action       string    `json:"action"` // 'INSERT', 'UPDATE', 'DELETE'
+	ChangeDate   time.Time `json:"change_date"`
+	OldData      string    `json:"old_data"` // JSONB as string
+	NewData      string    `json:"new_data"` // JSONB as string
 }
 

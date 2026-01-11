@@ -12,10 +12,10 @@
             box-sizing: border-box;
         }
         
-        body {
+        body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #2c3e50;
+            line-height: 1.6; 
+            color: #2c3e50; 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
             background-attachment: fixed;
             min-height: 100vh;
@@ -28,9 +28,9 @@
             padding: 0 20px;
         }
         
-        header {
+        header { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            color: white; 
             padding: 20px 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
@@ -70,9 +70,9 @@
             padding: 0;
         }
         
-        nav a {
-            color: white;
-            text-decoration: none;
+        nav a { 
+            color: white; 
+            text-decoration: none; 
             padding: 10px 18px;
             border-radius: 8px;
             transition: all 0.3s ease;
@@ -94,7 +94,7 @@
             margin-top: 20px;
         }
         
-        .content {
+        .content { 
             background: rgba(255, 255, 255, 0.98);
             padding: 30px;
             border-radius: 16px;
@@ -123,9 +123,9 @@
             font-weight: 600;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
             margin: 20px 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border-radius: 12px;
@@ -140,7 +140,7 @@
         
         th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            color: white; 
             font-weight: 600;
             font-size: 13px;
             text-transform: uppercase;
@@ -158,23 +158,23 @@
             border-bottom: none;
         }
         
-        .btn {
-            display: inline-block;
+        .btn { 
+            display: inline-block; 
             padding: 10px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
+            color: white; 
+            text-decoration: none; 
             border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
+            border: none; 
+            cursor: pointer; 
+            font-size: 14px; 
             margin: 4px;
             transition: all 0.3s ease;
             font-weight: 600;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         
-        .btn:hover {
+        .btn:hover { 
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
@@ -214,22 +214,22 @@
             margin-bottom: 18px;
         }
         
-        label {
-            display: block;
+        label { 
+            display: block; 
             margin-bottom: 8px;
             font-weight: 600;
             color: #764ba2;
             font-size: 14px;
         }
         
-        input[type="text"],
+        input[type="text"], 
         input[type="email"],
         input[type="date"],
-        input[type="number"],
+        input[type="number"], 
         input[type="search"],
         select,
         textarea {
-            width: 100%;
+            width: 100%; 
             padding: 12px;
             border: 2px solid rgba(102, 126, 234, 0.2);
             border-radius: 8px;
@@ -339,16 +339,16 @@
     </header>
     <nav>
         <div class="container">
-            <ul>
-                <li><a href="/">Главная</a></li>
-                <li><a href="/participants">Участники</a></li>
-                <li><a href="/judges">Жюри</a></li>
-                <li><a href="/topics">Темы</a></li>
-                <li><a href="/seasons">Сезоны</a></li>
-                <li><a href="/rounds">Раунды</a></li>
-                <li><a href="/performances">Выступления</a></li>
-                <li><a href="/queries">Запросы</a></li>
-            </ul>
+        <ul>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/participants">Участники</a></li>
+            <li><a href="/judges">Жюри</a></li>
+            <li><a href="/topics">Темы</a></li>
+            <li><a href="/seasons">Сезоны</a></li>
+            <li><a href="/rounds">Раунды</a></li>
+            <li><a href="/performances">Выступления</a></li>
+            <li><a href="/queries">Запросы</a></li>
+        </ul>
         </div>
     </nav>
     <div class="container content-wrapper">
@@ -357,9 +357,69 @@
 
 <button onclick="document.getElementById('form').style.display='block'" class="btn btn-success">+ Добавить выступление</button>
 
-<div id="form" style="display:none; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 2px solid rgba(102, 126, 234, 0.2); border-radius: 12px; padding: 25px; margin: 20px 0;">
-    <h3>Добавить выступление</h3>
-    <form method="POST" action="/performances/create">
+{{if .Performance}}
+<div id="form-edit" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 2px solid rgba(102, 126, 234, 0.2); border-radius: 12px; padding: 25px; margin: 20px 0;">
+    <h3>Редактировать выступление</h3>
+    <form method="POST" action="/performances/update?id={{.Performance.ID}}">
+        <div class="form-group">
+            <label>Раунд:</label>
+            <select name="round_id" disabled>
+                {{range .Rounds}}
+                <option value="{{.ID}}" {{if eq .ID $.Performance.RoundID}}selected{{end}}>Раунд {{.RoundNumber}} ({{.RoundDate.Format "2006-01-02"}})</option>
+                {{end}}
+            </select>
+            <small style="color: #7f8c8d; display: block; margin-top: 5px;">Раунд нельзя изменить</small>
+        </div>
+        <div class="form-group">
+            <label>Участник:</label>
+            <select name="participant_id" disabled>
+                {{range .Participants}}
+                <option value="{{.ID}}" {{if eq .ID $.Performance.ParticipantID}}selected{{end}}>{{.FirstName}} {{.LastName}}</option>
+                {{end}}
+            </select>
+            <small style="color: #7f8c8d; display: block; margin-top: 5px;">Участника нельзя изменить</small>
+        </div>
+        <div class="form-group">
+            <label>Позиция:</label>
+            <select name="position" disabled>
+                <option value="За" {{if and $.Performance.Position (eq $.Performance.Position.Code "for")}}selected{{end}}>За</option>
+                <option value="Против" {{if and $.Performance.Position (eq $.Performance.Position.Code "against")}}selected{{end}}>Против</option>
+            </select>
+            <small style="color: #7f8c8d; display: block; margin-top: 5px;">Позицию нельзя изменить</small>
+        </div>
+        <div class="form-group">
+            <label>Жюри:</label>
+            <select name="judge_id" disabled>
+                {{range .Judges}}
+                <option value="{{.ID}}" {{if eq .ID $.Performance.JudgeID}}selected{{end}}>{{.FirstName}} {{.LastName}}</option>
+                {{end}}
+            </select>
+            <small style="color: #7f8c8d; display: block; margin-top: 5px;">Жюри нельзя изменить</small>
+        </div>
+        <div class="form-group">
+            <label>Оценка логика (1-10):</label>
+            <input type="number" name="logic_score" min="1" max="10" value="{{if .Performance.LogicScore}}{{deref .Performance.LogicScore}}{{end}}">
+            <small style="color: #7f8c8d; display: block; margin-top: 5px;">Только жюри может выставлять оценки</small>
+        </div>
+        <div class="form-group">
+            <label>Оценка риторика (1-10):</label>
+            <input type="number" name="rhetoric_score" min="1" max="10" value="{{if .Performance.RhetoricScore}}{{deref .Performance.RhetoricScore}}{{end}}">
+        </div>
+        <div class="form-group">
+            <label>Оценка эрудиция (1-10):</label>
+            <input type="number" name="erudition_score" min="1" max="10" value="{{if .Performance.EruditionScore}}{{deref .Performance.EruditionScore}}{{end}}">
+        </div>
+        <div class="actions">
+            <button type="submit" class="btn btn-success">Сохранить оценки</button>
+            <a href="/performances" class="btn">Отмена</a>
+        </div>
+    </form>
+</div>
+{{end}}
+
+<div id="form" style="display:{{if .Performance}}none{{else if .EditMode}}none{{else}}none{{end}}; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 2px solid rgba(102, 126, 234, 0.2); border-radius: 12px; padding: 25px; margin: 20px 0;">
+                <h3>Добавить выступление</h3>
+                <form method="POST" action="/performances/create">
         <div class="form-group">
             <label>Раунд:</label>
             <select name="round_id" required>
@@ -404,16 +464,16 @@
             <input type="number" name="erudition_score" min="1" max="10">
         </div>
         <div class="actions">
-            <button type="submit" class="btn btn-success">Сохранить</button>
-            <button type="button" class="btn" onclick="document.getElementById('form').style.display='none'">Отмена</button>
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button type="button" class="btn" onclick="document.getElementById('form').style.display='none'">Отмена</button>
         </div>
-    </form>
-</div>
+                </form>
+            </div>
 
 {{if .Performances}}
 {{$count := len .Performances}}
 {{if gt $count 0}}
-<table>
+            <table>
     <thead>
         <tr>
             <th>№</th>
@@ -425,7 +485,7 @@
             <th>Действия</th>
         </tr>
     </thead>
-    <tbody>
+                <tbody>
         {{range $index, $p := .Performances}}
         <tr>
             <td>{{add $index 1}}</td>
@@ -445,7 +505,7 @@
                 {{end}}
                 {{end}}
             </td>
-            <td>{{$p.Position}}</td>
+            <td>{{if $p.Position}}{{$p.Position.Name}}{{else}}-{{end}}</td>
             <td>
                 {{range $.Judges}}
                 {{if eq .ID $p.JudgeID}}
@@ -455,10 +515,25 @@
                 {{end}}
             </td>
             <td>
-                {{if $p.LogicScore}}{{printf "Л: %d" $p.LogicScore}}{{end}}
-                {{if $p.RhetoricScore}}{{printf " Р: %d" $p.RhetoricScore}}{{end}}
-                {{if $p.EruditionScore}}{{printf " Э: %d" $p.EruditionScore}}{{end}}
-                {{if not $p.LogicScore}}{{if not $p.RhetoricScore}}{{if not $p.EruditionScore}}<span style="color: #95a5a6;">Нет оценок</span>{{end}}{{end}}{{end}}
+                {{if or $p.LogicScore $p.RhetoricScore $p.EruditionScore}}
+                    {{$avg := averageScores $p.LogicScore $p.RhetoricScore $p.EruditionScore}}
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            {{if $p.LogicScore}}<span class="status-badge status-active" title="Логика">Л: {{deref $p.LogicScore}}</span>{{end}}
+                            {{if $p.RhetoricScore}}<span class="status-badge status-active" title="Риторика">Р: {{deref $p.RhetoricScore}}</span>{{end}}
+                            {{if $p.EruditionScore}}<span class="status-badge status-active" title="Эрудиция">Э: {{deref $p.EruditionScore}}</span>{{end}}
+                        </div>
+                        {{if and $p.LogicScore $p.RhetoricScore $p.EruditionScore}}
+                            <div style="margin-top: 4px;">
+                                <strong style="color: #667eea; font-size: 14px;">Среднее: {{printf "%.2f" $avg}}</strong>
+                            </div>
+                        {{else}}
+                            <div style="margin-top: 4px; color: #95a5a6; font-size: 12px;">(Не все оценки выставлены)</div>
+                        {{end}}
+                    </div>
+                {{else}}
+                    <span style="color: #95a5a6; font-style: italic;">Нет оценок</span>
+                {{end}}
             </td>
             <td>
                 <a href="/performances/update?id={{$p.ID}}" class="btn">Изменить</a>
@@ -466,8 +541,8 @@
             </td>
         </tr>
         {{end}}
-    </tbody>
-</table>
+                </tbody>
+            </table>
 {{else}}
 <div class="empty-state">
     <p>Нет выступлений. Добавьте первое выступление.</p>

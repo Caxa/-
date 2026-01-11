@@ -442,20 +442,42 @@
         <div class="number">{{.Stats.Performances}}</div>
         <div class="label"><a href="/performances">Выступления</a></div>
     </div>
-</div><script>
-            function showForm(type) {
-                document.getElementById('form-create').style.display = 'block';
-                if (document.getElementById('form-edit')) {
-                    document.getElementById('form-edit').style.display = 'none';
-                }
-            }
-            function hideForms() {
-                document.getElementById('form-create').style.display = 'none';
-                if (document.getElementById('form-edit')) {
-                    document.getElementById('form-edit').style.display = 'none';
-                }
-            }
-            </script>
+</div>
+
+{{if .LatestTournaments}}
+<h2 style="margin-top: 40px;">Последние турниры</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Дата начала</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .LatestTournaments}}
+        <tr>
+            <td><a href="/seasons/details?id={{.SeasonID}}" style="color: #667eea; text-decoration: none; font-weight: 600;">{{.Name}}</a></td>
+            <td>{{.StartDate.Format "02.01.2006"}}</td>
+            <td>
+                {{if and .Status (eq .Status.Code "upcoming")}}
+                <span class="status-badge status-upcoming">Предстоящий</span>
+                {{else if and .Status (eq .Status.Code "active")}}
+                <span class="status-badge status-active">Активный</span>
+                {{else if and .Status (eq .Status.Code "completed")}}
+                <span class="status-badge status-completed">Завершен</span>
+                {{else if .Status}}
+                <span class="status-badge status-completed">{{.Status.Name}}</span>
+                {{else}}
+                <span class="status-badge status-upcoming">Не определен</span>
+                {{end}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}
+
         </div>
     </div>
 </body>
