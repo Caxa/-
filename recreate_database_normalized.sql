@@ -29,6 +29,7 @@ DROP TABLE IF EXISTS debate_positions CASCADE;
 
 -- Удаление старых таблиц с кириллическими именами (если существуют)
 DROP TABLE IF EXISTS выступления CASCADE;
+DROP TABLE IF EXISTS регистрации_на_турнир CASCADE;
 DROP TABLE IF EXISTS раунды CASCADE;
 DROP TABLE IF EXISTS турниры CASCADE;
 DROP TABLE IF EXISTS сезоны CASCADE;
@@ -37,6 +38,8 @@ DROP TABLE IF EXISTS участники CASCADE;
 DROP TABLE IF EXISTS жюри CASCADE;
 DROP TABLE IF EXISTS аудит_участников CASCADE;
 DROP TABLE IF EXISTS participants_audit CASCADE;
+DROP TABLE IF EXISTS статусы_турниров CASCADE;
+DROP TABLE IF EXISTS позиции_дебатов CASCADE;
 
 -- Удаление функций
 DROP FUNCTION IF EXISTS calculate_total_score(INTEGER, INTEGER, INTEGER) CASCADE;
@@ -48,6 +51,15 @@ DROP FUNCTION IF EXISTS validate_performance_scores() CASCADE;
 DROP FUNCTION IF EXISTS validate_round_number() CASCADE;
 DROP FUNCTION IF EXISTS set_created_at() CASCADE;
 DROP FUNCTION IF EXISTS log_participant_changes() CASCADE;
+-- Удаление новых функций для регистрации и перераспределения
+DROP FUNCTION IF EXISTS перераспределить_участников_турнира(INTEGER) CASCADE;
+DROP FUNCTION IF EXISTS проверить_и_перенести_турнир(INTEGER) CASCADE;
+DROP FUNCTION IF EXISTS обработать_турниры_в_день_начала() CASCADE;
+DROP FUNCTION IF EXISTS триггер_проверить_турнир_при_изменении_даты() CASCADE;
+DROP FUNCTION IF EXISTS триггер_проверить_турнир_при_регистрации() CASCADE;
+DROP FUNCTION IF EXISTS обновить_статус_турнира() CASCADE;
+DROP FUNCTION IF EXISTS валидировать_оценки_выступления() CASCADE;
+DROP FUNCTION IF EXISTS валидировать_номер_раунда() CASCADE;
 
 -- Включение зависимостей обратно
 SET session_replication_role = 'origin';
@@ -65,15 +77,16 @@ SET session_replication_role = 'origin';
 \i seed_normalized.sql
 
 -- Проверка успешного создания
-SELECT 'База данных успешно пересоздана!' as status;
+SELECT 'База данных успешно пересоздана!' as статус;
 SELECT 
-    (SELECT COUNT(*) FROM participants) as participants,
-    (SELECT COUNT(*) FROM judges) as judges,
-    (SELECT COUNT(*) FROM topics) as topics,
-    (SELECT COUNT(*) FROM seasons) as seasons,
-    (SELECT COUNT(*) FROM tournaments) as tournaments,
-    (SELECT COUNT(*) FROM rounds) as rounds,
-    (SELECT COUNT(*) FROM performances) as performances,
-    (SELECT COUNT(*) FROM tournament_statuses) as statuses,
-    (SELECT COUNT(*) FROM debate_positions) as positions;
+    (SELECT COUNT(*) FROM участники) as участники,
+    (SELECT COUNT(*) FROM жюри) as жюри,
+    (SELECT COUNT(*) FROM темы) as темы,
+    (SELECT COUNT(*) FROM сезоны) as сезоны,
+    (SELECT COUNT(*) FROM турниры) as турниры,
+    (SELECT COUNT(*) FROM раунды) as раунды,
+    (SELECT COUNT(*) FROM выступления) as выступления,
+    (SELECT COUNT(*) FROM статусы_турниров) as статусы,
+    (SELECT COUNT(*) FROM позиции_дебатов) as позиции,
+    (SELECT COUNT(*) FROM регистрации_на_турнир) as регистрации;
 

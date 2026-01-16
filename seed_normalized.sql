@@ -3,7 +3,7 @@
 -- ============================================================================
 
 -- Вставка участников (25 участников)
-INSERT INTO participants (first_name, last_name, email) VALUES
+INSERT INTO участники (имя, фамилия, электронная_почта) VALUES
     ('Иван', 'Иванов', 'ivan.ivanov@example.com'),
     ('Мария', 'Петрова', 'maria.petrova@example.com'),
     ('Алексей', 'Сидоров', 'alexey.sidorov@example.com'),
@@ -31,7 +31,7 @@ INSERT INTO participants (first_name, last_name, email) VALUES
     ('Роман', 'Романов', 'roman.romanov@example.com');
 
 -- Вставка жюри (10 членов жюри)
-INSERT INTO judges (first_name, last_name, email) VALUES
+INSERT INTO жюри (имя, фамилия, электронная_почта) VALUES
     ('Александр', 'Экспертов', 'alexander.expertov@example.com'),
     ('Марина', 'Судейская', 'marina.sudeykaya@example.com'),
     ('Виталий', 'Оценщиков', 'vitaly.ocenschikov@example.com'),
@@ -44,7 +44,7 @@ INSERT INTO judges (first_name, last_name, email) VALUES
     ('Лариса', 'Жюринова', 'larisa.zhurinova@example.com');
 
 -- Вставка тем дебатов (15 тем)
-INSERT INTO topics (title, description) VALUES
+INSERT INTO темы (заголовок, описание) VALUES
     ('Искусственный интеллект заменит человеческий труд', 'Обсуждение влияния ИИ на рынок труда'),
     ('Социальные сети негативно влияют на молодежь', 'Анализ влияния социальных сетей на психику'),
     ('Дистанционное обучение эффективнее очного', 'Сравнение эффективности форм обучения'),
@@ -61,108 +61,155 @@ INSERT INTO topics (title, description) VALUES
     ('Универсальный язык улучшит мир', 'Обсуждение глобальной коммуникации'),
     ('Видеоигры - это искусство', 'Вопросы признания видеоигр искусством');
 
--- Вставка сезонов (3 сезона)
-INSERT INTO seasons (name, start_date, end_date) VALUES
+-- Вставка сезонов (4 сезона)
+INSERT INTO сезоны (название, дата_начала, дата_окончания) VALUES
     ('Осенний сезон 2024', '2024-09-01', '2024-11-30'),
     ('Зимний сезон 2024-2025', '2024-12-01', '2025-02-28'),
-    ('Весенний сезон 2025', '2025-03-01', '2025-05-31');
+    ('Весенний сезон 2025', '2025-03-01', '2025-05-31'),
+    ('Весенний сезон 2026', '2026-03-01', '2026-05-31');
 
 -- Вставка турниров (используем подзапросы для получения ID статусов)
-INSERT INTO tournaments (season_id, name, start_date, end_date, status_id) VALUES
-    ((SELECT id FROM seasons WHERE name = 'Осенний сезон 2024'), 'Осенний турнир #1', '2024-09-15', '2024-09-22', (SELECT id FROM tournament_statuses WHERE code = 'completed')),
-    ((SELECT id FROM seasons WHERE name = 'Осенний сезон 2024'), 'Осенний турнир #2', '2024-10-10', '2024-10-17', (SELECT id FROM tournament_statuses WHERE code = 'completed')),
-    ((SELECT id FROM seasons WHERE name = 'Осенний сезон 2024'), 'Осенний турнир #3', '2024-11-05', '2024-11-12', (SELECT id FROM tournament_statuses WHERE code = 'active')),
-    ((SELECT id FROM seasons WHERE name = 'Зимний сезон 2024-2025'), 'Зимний турнир #1', '2024-12-15', '2024-12-22', (SELECT id FROM tournament_statuses WHERE code = 'upcoming')),
-    ((SELECT id FROM seasons WHERE name = 'Зимний сезон 2024-2025'), 'Зимний турнир #2', '2025-01-10', '2025-01-17', (SELECT id FROM tournament_statuses WHERE code = 'upcoming')),
-    ((SELECT id FROM seasons WHERE name = 'Зимний сезон 2024-2025'), 'Зимний турнир #3', '2025-02-05', '2025-02-12', (SELECT id FROM tournament_statuses WHERE code = 'upcoming')),
-    ((SELECT id FROM seasons WHERE name = 'Весенний сезон 2025'), 'Весенний турнир #1', '2025-03-15', '2025-03-22', (SELECT id FROM tournament_statuses WHERE code = 'upcoming')),
-    ((SELECT id FROM seasons WHERE name = 'Весенний сезон 2025'), 'Весенний турнир #2', '2025-04-10', '2025-04-17', (SELECT id FROM tournament_statuses WHERE code = 'upcoming')),
-    ((SELECT id FROM seasons WHERE name = 'Весенний сезон 2025'), 'Весенний турнир #3', '2025-05-05', '2025-05-12', (SELECT id FROM tournament_statuses WHERE code = 'upcoming'));
+INSERT INTO турниры (ид_сезона, название, дата_начала, дата_окончания, ид_статуса) VALUES
+    ((SELECT id FROM сезоны WHERE название = 'Осенний сезон 2024'), 'Осенний турнир #1', '2024-09-15', '2024-09-22', (SELECT id FROM статусы_турниров WHERE код = 'completed')),
+    ((SELECT id FROM сезоны WHERE название = 'Осенний сезон 2024'), 'Осенний турнир #2', '2024-10-10', '2024-10-17', (SELECT id FROM статусы_турниров WHERE код = 'completed')),
+    ((SELECT id FROM сезоны WHERE название = 'Осенний сезон 2024'), 'Осенний турнир #3', '2024-11-05', '2024-11-12', (SELECT id FROM статусы_турниров WHERE код = 'active')),
+    ((SELECT id FROM сезоны WHERE название = 'Зимний сезон 2024-2025'), 'Зимний турнир #1', '2024-12-15', '2024-12-22', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Зимний сезон 2024-2025'), 'Зимний турнир #2', '2025-01-10', '2025-01-17', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Зимний сезон 2024-2025'), 'Зимний турнир #3', '2025-02-05', '2025-02-12', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2025'), 'Весенний турнир #1', '2025-03-15', '2025-03-22', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2025'), 'Весенний турнир #2', '2025-04-10', '2025-04-17', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2025'), 'Весенний турнир #3', '2025-05-05', '2025-05-12', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2026'), 'Весенний турнир 2026 #1', '2026-03-15', '2026-03-22', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2026'), 'Весенний турнир 2026 #2', '2026-04-10', '2026-04-17', (SELECT id FROM статусы_турниров WHERE код = 'upcoming')),
+    ((SELECT id FROM сезоны WHERE название = 'Весенний сезон 2026'), 'Весенний турнир 2026 #3', '2026-05-05', '2026-05-12', (SELECT id FROM статусы_турниров WHERE код = 'upcoming'));
 
--- Вставка раундов (по 3 раунда на каждый турнир, всего 27 раундов)
-INSERT INTO rounds (tournament_id, topic_id, round_number, round_date)
+-- Вставка раундов (по 6 раундов на каждый турнир, всего 54 раунда)
+-- Распределяем темы равномерно по всем раундам
+INSERT INTO раунды (ид_турнира, ид_темы, номер_раунда, дата_раунда)
 SELECT 
-    t.id as tournament_id,
-    (SELECT id FROM topics ORDER BY (t.id * 100 + round_num) % 15 + 1 LIMIT 1) as topic_id,
-    round_num,
-    t.start_date + (round_num - 1) * INTERVAL '2 days' as round_date
-FROM tournaments t
-CROSS JOIN generate_series(1, 3) as round_num
+    t.id as ид_турнира,
+    (SELECT id FROM темы ORDER BY id OFFSET ((t.id - 1) * 6 + round_num - 1) % (SELECT COUNT(*) FROM темы) LIMIT 1) as ид_темы,
+    round_num as номер_раунда,
+    t.дата_начала + (round_num - 1) * INTERVAL '2 days' as дата_раунда
+FROM турниры t
+CROSS JOIN generate_series(1, 6) as round_num
 ORDER BY t.id, round_num;
 
 -- Вставка выступлений (по 10 участников на раунд: 5 "За" и 5 "Против")
--- Используем функцию для генерации выступлений
+-- Используем функцию для генерации выступлений с балансировкой побед
 DO $$
 DECLARE
     round_rec RECORD;
     participant_rec RECORD;
     judge_rec RECORD;
-    position_for_id INTEGER;
-    position_against_id INTEGER;
-    participant_counter INTEGER;
+    ид_позиции_за INTEGER;
+    ид_позиции_против INTEGER;
+    счетчик_участников INTEGER;
+    ид_темы_раунда INTEGER;
+    победитель_раунда INTEGER; -- 0 = "За", 1 = "Против"
+    базовая_оценка_за INTEGER;
+    базовая_оценка_против INTEGER;
+    тема_смещение INTEGER;
 BEGIN
     -- Получаем ID позиций
-    SELECT id INTO position_for_id FROM debate_positions WHERE code = 'for';
-    SELECT id INTO position_against_id FROM debate_positions WHERE code = 'against';
+    SELECT id INTO ид_позиции_за FROM позиции_дебатов WHERE код = 'for';
+    SELECT id INTO ид_позиции_против FROM позиции_дебатов WHERE код = 'against';
     
     -- Для каждого раунда создаем 10 выступлений
-    FOR round_rec IN SELECT id FROM rounds ORDER BY id
+    FOR round_rec IN SELECT r.id, r.ид_темы, r.номер_раунда FROM раунды r ORDER BY r.id
     LOOP
-        participant_counter := 0;
+        ид_темы_раунда := round_rec.ид_темы;
+        
+        -- Определяем победителя раунда с более разнообразным распределением
+        -- Для каждой темы создаем паттерн побед на основе ID темы, ID раунда и номера раунда
+        -- Это создаст разное распределение для разных тем (например, 3 "За" и 2 "Против")
+        -- Используем формулу, которая дает более разнообразные результаты
+        -- Для разных тем будет разное соотношение: некоторые темы чаще выигрывают "За", другие - "Против"
+        -- Используем ID темы для создания уникального паттерна для каждой темы
+        тема_смещение := (ид_темы_раунда * 13 + round_rec.номер_раунда * 17) % 10;
+        -- Для тем с четным ID больше побед "За" (60-70%), для нечетных - больше "Против" (60-70%)
+        IF ид_темы_раунда % 2 = 0 THEN
+            -- Четные темы: больше побед "За"
+            IF тема_смещение < 7 THEN
+                победитель_раунда := 0; -- "За"
+            ELSE
+                победитель_раунда := 1; -- "Против"
+            END IF;
+        ELSE
+            -- Нечетные темы: больше побед "Против"
+            IF тема_смещение < 3 THEN
+                победитель_раунда := 0; -- "За"
+            ELSE
+                победитель_раунда := 1; -- "Против"
+            END IF;
+        END IF;
+        
+        счетчик_участников := 0;
+        
+        -- Устанавливаем базовые оценки в зависимости от победителя
+        IF победитель_раунда = 0 THEN
+            -- Команда "За" выигрывает
+            базовая_оценка_за := 7;
+            базовая_оценка_против := 5;
+        ELSE
+            -- Команда "Против" выигрывает
+            базовая_оценка_за := 5;
+            базовая_оценка_против := 7;
+        END IF;
         
         -- Первые 5 участников с позицией "За"
-        FOR participant_rec IN SELECT id FROM participants ORDER BY id LIMIT 5
+        FOR participant_rec IN SELECT id FROM участники ORDER BY id LIMIT 5
         LOOP
-            SELECT id INTO judge_rec FROM judges ORDER BY RANDOM() LIMIT 1;
+            SELECT id INTO judge_rec FROM жюри ORDER BY RANDOM() LIMIT 1;
             
-            INSERT INTO performances (
-                round_id, participant_id, position_id,
-                logic_score, rhetoric_score, erudition_score, judge_id
+            INSERT INTO выступления (
+                ид_раунда, ид_участника, ид_позиции,
+                оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи
             ) VALUES (
                 round_rec.id,
                 participant_rec.id,
-                position_for_id,
-                7 + (participant_counter % 3), -- 7-9
-                6 + (participant_counter % 4), -- 6-9
-                8 + (participant_counter % 2), -- 8-9
+                ид_позиции_за,
+                базовая_оценка_за + (счетчик_участников % 3), -- Вариация 0-2
+                базовая_оценка_за + (счетчик_участников % 2), -- Вариация 0-1
+                базовая_оценка_за + 1 + (счетчик_участников % 2), -- Вариация 1-2
                 judge_rec.id
             );
             
-            participant_counter := participant_counter + 1;
+            счетчик_участников := счетчик_участников + 1;
         END LOOP;
         
         -- Следующие 5 участников с позицией "Против"
-        FOR participant_rec IN SELECT id FROM participants ORDER BY id OFFSET 5 LIMIT 5
+        FOR participant_rec IN SELECT id FROM участники ORDER BY id OFFSET 5 LIMIT 5
         LOOP
-            SELECT id INTO judge_rec FROM judges ORDER BY RANDOM() LIMIT 1;
+            SELECT id INTO judge_rec FROM жюри ORDER BY RANDOM() LIMIT 1;
             
-            INSERT INTO performances (
-                round_id, participant_id, position_id,
-                logic_score, rhetoric_score, erudition_score, judge_id
+            INSERT INTO выступления (
+                ид_раунда, ид_участника, ид_позиции,
+                оценка_логики, оценка_риторики, оценка_эрудиции, ид_судьи
             ) VALUES (
                 round_rec.id,
                 participant_rec.id,
-                position_against_id,
-                5 + (participant_counter % 4), -- 5-8 (ниже для баланса)
-                6 + (participant_counter % 3), -- 6-8
-                7 + (participant_counter % 3), -- 7-9
+                ид_позиции_против,
+                базовая_оценка_против + (счетчик_участников % 3), -- Вариация 0-2
+                базовая_оценка_против + (счетчик_участников % 2), -- Вариация 0-1
+                базовая_оценка_против + 1 + (счетчик_участников % 2), -- Вариация 1-2
                 judge_rec.id
             );
             
-            participant_counter := participant_counter + 1;
+            счетчик_участников := счетчик_участников + 1;
         END LOOP;
     END LOOP;
 END $$;
 
 -- Обновляем статусы всех турниров на основе текущей даты
-SELECT update_all_tournament_statuses();
+SELECT обновить_все_статусы_турниров();
 
 -- Проверка данных
 SELECT 
-    (SELECT COUNT(*) FROM participants) as participants_count,
-    (SELECT COUNT(*) FROM judges) as judges_count,
-    (SELECT COUNT(*) FROM topics) as topics_count,
-    (SELECT COUNT(*) FROM seasons) as seasons_count,
-    (SELECT COUNT(*) FROM tournaments) as tournaments_count,
-    (SELECT COUNT(*) FROM rounds) as rounds_count,
-    (SELECT COUNT(*) FROM performances) as performances_count;
+    (SELECT COUNT(*) FROM участники) as количество_участников,
+    (SELECT COUNT(*) FROM жюри) as количество_жюри,
+    (SELECT COUNT(*) FROM темы) as количество_тем,
+    (SELECT COUNT(*) FROM сезоны) as количество_сезонов,
+    (SELECT COUNT(*) FROM турниры) as количество_турниров,
+    (SELECT COUNT(*) FROM раунды) as количество_раундов,
+    (SELECT COUNT(*) FROM выступления) as количество_выступлений;

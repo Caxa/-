@@ -92,6 +92,10 @@ func main() {
 	mux.HandleFunc("/tournaments/update", h.UpdateTournament)
 	mux.HandleFunc("/tournaments/delete", h.DeleteTournament)
 	mux.HandleFunc("/tournaments/details", h.TournamentDetailsPage)
+	mux.HandleFunc("/tournaments/register", h.TournamentRegistration)
+	mux.HandleFunc("/tournaments/register/participant", h.RegisterParticipant)
+	mux.HandleFunc("/tournaments/unregister", h.UnregisterParticipant)
+	mux.HandleFunc("/tournaments/check", h.CheckTournament)
 	mux.HandleFunc("/tournaments/", h.TournamentDetails) // Обрабатывает /tournaments/{id}/results и /tournaments/{id}/schedule
 
 	// Раунды

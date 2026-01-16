@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Описание сущностей базы данных</title>
+    <style>
+        @page {
+            margin: 2cm 1.5cm 2cm 3cm;
+        }
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 14pt;
+            line-height: 1.5;
+            text-align: justify;
+            margin: 0;
+            padding: 20pt;
+        }
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 20pt 0 10pt 0;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 16pt 0 8pt 0;
+            page-break-after: avoid;
+        }
+        h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 12pt 0 6pt 1.25cm;
+            page-break-after: avoid;
+        }
+        p {
+            margin: 6pt 0;
+            text-indent: 1.25cm;
+        }
+        .no-indent {
+            text-indent: 0;
+        }
+        ul {
+            margin: 6pt 0;
+            padding-left: 1.5cm;
+        }
+        li {
+            margin: 3pt 0;
+        }
+        strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>4. МОДЕЛЬ ДАННЫХ</h1>
+
+<h2>4.2. Описание сущностей</h2>
+
+<h3>Справочные таблицы</h3>
+
+<p class="no-indent"><strong>Таблица "статусы_турниров"</strong> — справочная таблица для нормализации статусов турниров:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>код (VARCHAR(20) NOT NULL UNIQUE) — код статуса ('upcoming', 'active', 'completed');</li>
+<li>название (VARCHAR(100) NOT NULL UNIQUE) — название статуса ('Предстоящий', 'Активный', 'Завершен');</li>
+<li>описание (TEXT) — описание статуса;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "позиции_дебатов"</strong> — справочная таблица для нормализации позиций в дебатах:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>код (VARCHAR(10) NOT NULL UNIQUE) — код позиции ('for', 'against');</li>
+<li>название (VARCHAR(50) NOT NULL UNIQUE) — название позиции ('За', 'Против');</li>
+<li>описание (TEXT) — описание позиции;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи.</li>
+</ul>
+
+<h3>Основные таблицы</h3>
+
+<p class="no-indent"><strong>Таблица "участники"</strong> — хранит информацию об участниках дискуссионного клуба:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>имя (VARCHAR(100) NOT NULL) — имя участника;</li>
+<li>фамилия (VARCHAR(100) NOT NULL) — фамилия участника;</li>
+<li>электронная_почта (VARCHAR(255) NOT NULL UNIQUE) — электронная почта (уникальная);</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "жюри"</strong> — хранит информацию о членах жюри:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>имя (VARCHAR(100) NOT NULL) — имя члена жюри;</li>
+<li>фамилия (VARCHAR(100) NOT NULL) — фамилия члена жюри;</li>
+<li>электронная_почта (VARCHAR(255) NOT NULL UNIQUE) — электронная почта (уникальная);</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "темы"</strong> — хранит темы для обсуждения в дебатах:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>заголовок (VARCHAR(500) NOT NULL) — заголовок темы;</li>
+<li>описание (TEXT) — описание темы;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "сезоны"</strong> — хранит информацию о временных периодах проведения турниров:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>название (VARCHAR(255) NOT NULL) — название сезона;</li>
+<li>дата_начала (DATE NOT NULL) — дата начала сезона;</li>
+<li>дата_окончания (DATE NOT NULL) — дата окончания сезона;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи;</li>
+<li>CONSTRAINT сезоны_даты_валидны CHECK (дата_окончания >= дата_начала) — проверка корректности дат.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "турниры"</strong> — хранит информацию о турнирах в рамках сезонов:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>ид_сезона (INTEGER NOT NULL REFERENCES сезоны(id)) — внешний ключ на таблицу сезонов;</li>
+<li>название (VARCHAR(200) NOT NULL) — название турнира;</li>
+<li>дата_начала (DATE NOT NULL) — дата начала турнира;</li>
+<li>дата_окончания (DATE) — дата окончания турнира (может быть NULL);</li>
+<li>ид_статуса (INTEGER NOT NULL REFERENCES статусы_турниров(id)) — внешний ключ на таблицу статусов турниров;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи;</li>
+<li>CONSTRAINT турниры_даты_валидны CHECK (дата_окончания IS NULL OR дата_окончания >= дата_начала) — проверка корректности дат.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "раунды"</strong> — хранит информацию об отдельных раундах дебатов в турнирах:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>ид_турнира (INTEGER NOT NULL REFERENCES турниры(id)) — внешний ключ на таблицу турниров;</li>
+<li>ид_темы (INTEGER NOT NULL REFERENCES темы(id)) — внешний ключ на таблицу тем;</li>
+<li>номер_раунда (INTEGER NOT NULL) — номер раунда в турнире;</li>
+<li>дата_раунда (DATE NOT NULL) — дата проведения раунда;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи;</li>
+<li>CONSTRAINT раунды_уникальный_турнир_номер UNIQUE (ид_турнира, номер_раунда) — уникальность номера раунда в рамках турнира;</li>
+<li>CONSTRAINT раунды_номер_положительный CHECK (номер_раунда > 0) — проверка положительности номера раунда.</li>
+</ul>
+
+<p class="no-indent"><strong>Таблица "выступления"</strong> — хранит записи о выступлениях участников с оценками:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>ид_раунда (INTEGER NOT NULL REFERENCES раунды(id)) — внешний ключ на таблицу раундов;</li>
+<li>ид_участника (INTEGER NOT NULL REFERENCES участники(id)) — внешний ключ на таблицу участников;</li>
+<li>ид_позиции (INTEGER NOT NULL REFERENCES позиции_дебатов(id)) — внешний ключ на таблицу позиций дебатов;</li>
+<li>оценка_логики (INTEGER CHECK (оценка_логики IS NULL OR (оценка_логики >= 1 AND оценка_логики <= 10))) — оценка по критерию логики (от 1 до 10, может быть NULL);</li>
+<li>оценка_риторики (INTEGER CHECK (оценка_риторики IS NULL OR (оценка_риторики >= 1 AND оценка_риторики <= 10))) — оценка по критерию риторики (от 1 до 10, может быть NULL);</li>
+<li>оценка_эрудиции (INTEGER CHECK (оценка_эрудиции IS NULL OR (оценка_эрудиции >= 1 AND оценка_эрудиции <= 10))) — оценка по критерию эрудиции (от 1 до 10, может быть NULL);</li>
+<li>ид_судьи (INTEGER NOT NULL REFERENCES жюри(id)) — внешний ключ на таблицу жюри;</li>
+<li>дата_создания (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата создания записи;</li>
+<li>CONSTRAINT выступления_уникальный_раунд_участник UNIQUE (ид_раунда, ид_участника) — уникальность выступления участника в раунде.</li>
+</ul>
+
+<h3>Таблицы аудита</h3>
+
+<p class="no-indent"><strong>Таблица "аудит_участников"</strong> — хранит историю изменений данных участников:</p>
+<ul>
+<li>id (SERIAL PRIMARY KEY) — уникальный идентификатор;</li>
+<li>ид_участника (INTEGER NOT NULL REFERENCES участники(id)) — внешний ключ на таблицу участников;</li>
+<li>действие (VARCHAR(10) NOT NULL CHECK (действие IN ('INSERT', 'UPDATE', 'DELETE'))) — тип действия (INSERT, UPDATE, DELETE);</li>
+<li>дата_изменения (TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL) — дата и время изменения;</li>
+<li>старые_данные (JSONB) — данные до изменения в формате JSON;</li>
+<li>новые_данные (JSONB) — данные после изменения в формате JSON.</li>
+</ul>
+
+<h2>4.3. Нормализация</h2>
+
+<p>База данных нормализована до BCNF (Boyce-Codd Normal Form):</p>
+<ul>
+<li>Каждая таблица имеет первичный ключ (id);</li>
+<li>Все атрибуты полностью зависят от первичного ключа;</li>
+<li>Нет транзитивных зависимостей;</li>
+<li>Все детерминанты являются потенциальными ключами.</li>
+</ul>
+
+<p>Для обеспечения нормализации были созданы справочные таблицы:</p>
+<ul>
+<li><strong>статусы_турниров</strong> — вынесены статусы турниров из таблицы турниров для устранения избыточности данных;</li>
+<li><strong>позиции_дебатов</strong> — вынесены позиции в дебатах из таблицы выступлений для устранения избыточности данных.</li>
+</ul>
+
+<p>Все внешние ключи настроены с соответствующими правилами каскадирования:</p>
+<ul>
+<li>ON DELETE RESTRICT — предотвращает удаление связанных записей;</li>
+<li>ON DELETE CASCADE — удаляет связанные записи при удалении родительской;</li>
+<li>ON UPDATE CASCADE — обновляет связанные записи при обновлении родительской.</li>
+</ul>
+
+</body>
+</html>
+

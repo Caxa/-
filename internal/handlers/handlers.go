@@ -817,13 +817,22 @@ func (h *Handlers) UpdateTournament(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Tournament not found", http.StatusNotFound)
 		return
 	}
+	
+	// Получаем количество раундов для турниров
+	tournamentRoundsCount := make(map[int]int)
+	for _, t := range tournaments {
+		count, _ := h.repo.GetRoundsCountByTournament(t.ID)
+		tournamentRoundsCount[t.ID] = count
+	}
+	
 	data := map[string]interface{}{
-		"Tournaments":  tournaments,
-		"Seasons":      seasons,
-		"Tournament":   tournament,
-		"Search":       "",
-		"TotalCount":   len(tournaments),
-		"FilteredCount": len(tournaments),
+		"Tournaments":        tournaments,
+		"Seasons":            seasons,
+		"Tournament":         tournament,
+		"Search":             "",
+		"TotalCount":         len(tournaments),
+		"FilteredCount":      len(tournaments),
+		"TournamentRoundsCount": tournamentRoundsCount,
 	}
 	if err := h.templates.ExecuteTemplate(w, "tournaments.html", data); err != nil {
 		log.Printf("Template error: %v", err)
@@ -837,6 +846,133 @@ func (h *Handlers) DeleteTournament(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/tournaments", http.StatusSeeOther)
+}
+
+// Регистрация участников на турнир
+func (h *Handlers) TournamentRegistration(w http.ResponseWriter, r *http.Request) {
+	tournamentID, _ := strconv.Atoi(r.URL.Query().Get("tournament_id"))
+	if tournamentID == 0 {
+		http.Error(w, "Tournament ID required", http.StatusBadRequest)
+		return
+	}
+	
+	tournament, err := h.repo.GetTournamentByID(tournamentID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	participants, _ := h.repo.GetParticipants()
+	positions, _ := h.repo.GetDebatePositions()
+	registrations, _ := h.repo.GetTournamentRegistrations(tournamentID)
+	
+	// Получаем статистику регистраций
+	forCount, againstCount, _ := h.repo.GetRegistrationCountsByPosition(tournamentID)
+	totalCount, _ := h.repo.GetTotalRegistrationCount(tournamentID)
+	
+	// Создаем карту зарегистрированных участников
+	registeredMap := make(map[int]bool)
+	for _, reg := range registrations {
+		registeredMap[reg.ParticipantID] = true
+	}
+	
+	// Создаем карту участников для быстрого доступа в шаблоне
+	participantsMap := make(map[int]models.Participant)
+	for _, p := range participants {
+		participantsMap[p.ID] = p
+	}
+	
+	// Получаем параметр check из URL (результат проверки)
+	checkResult := r.URL.Query().Get("check")
+	
+	data := map[string]interface{}{
+		"Tournament":    tournament,
+		"Participants":  participants,
+		"ParticipantsMap": participantsMap,
+		"Positions":     positions,
+		"Registrations": registrations,
+		"ForCount":      forCount,
+		"AgainstCount":  againstCount,
+		"TotalCount":    totalCount,
+		"RegisteredMap": registeredMap,
+		"check":         checkResult,
+	}
+	
+	if err := h.templates.ExecuteTemplate(w, "tournament_registration.html", data); err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handlers) RegisterParticipant(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	
+	tournamentID, _ := strconv.Atoi(r.FormValue("tournament_id"))
+	participantID, _ := strconv.Atoi(r.FormValue("participant_id"))
+	positionID, _ := strconv.Atoi(r.FormValue("position_id"))
+	
+	if tournamentID == 0 || participantID == 0 || positionID == 0 {
+		http.Error(w, "All fields required", http.StatusBadRequest)
+		return
+	}
+	
+	_, err := h.repo.RegisterParticipantForTournament(tournamentID, participantID, positionID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Автоматически проверяем турнир после регистрации (триггер тоже сработает, но это для надежности)
+	h.repo.CheckAndProcessTournament(tournamentID)
+	
+	http.Redirect(w, r, fmt.Sprintf("/tournaments/register?tournament_id=%d", tournamentID), http.StatusSeeOther)
+}
+
+// Ручная проверка и обработка турнира
+func (h *Handlers) CheckTournament(w http.ResponseWriter, r *http.Request) {
+	tournamentID, _ := strconv.Atoi(r.URL.Query().Get("tournament_id"))
+	if tournamentID == 0 {
+		http.Error(w, "Tournament ID required", http.StatusBadRequest)
+		return
+	}
+	
+	moved, redistributed, err := h.repo.CheckAndProcessTournament(tournamentID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Формируем сообщение о результате
+	var message string
+	if moved {
+		message = "moved"
+	} else if redistributed {
+		message = "redistributed"
+	} else {
+		message = "ok"
+	}
+	
+	http.Redirect(w, r, fmt.Sprintf("/tournaments/register?tournament_id=%d&check=%s", tournamentID, message), http.StatusSeeOther)
+}
+
+func (h *Handlers) UnregisterParticipant(w http.ResponseWriter, r *http.Request) {
+	tournamentID, _ := strconv.Atoi(r.URL.Query().Get("tournament_id"))
+	participantID, _ := strconv.Atoi(r.URL.Query().Get("participant_id"))
+	
+	if tournamentID == 0 || participantID == 0 {
+		http.Error(w, "Tournament ID and Participant ID required", http.StatusBadRequest)
+		return
+	}
+	
+	if err := h.repo.UnregisterParticipantFromTournament(tournamentID, participantID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	http.Redirect(w, r, fmt.Sprintf("/tournaments/register?tournament_id=%d", tournamentID), http.StatusSeeOther)
 }
 
 func (h *Handlers) TournamentDetails(w http.ResponseWriter, r *http.Request) {
@@ -1442,11 +1578,11 @@ func (h *Handlers) Queries(w http.ResponseWriter, r *http.Request) {
 		results = rows
 	case "c":
 		topicsWin, _ := h.repo.GetTopicsWhereAgainstWins()
-		title = "Темы, где побеждает «против»"
-		headers = []string{"ID", "Тема", "Количество побед"}
+		title = "Статистика побед по темам (За и Против)"
+		headers = []string{"ID", "Тема", "Побед «За»", "Побед «Против»"}
 		rows := make([][]interface{}, 0, len(topicsWin))
 		for _, t := range topicsWin {
-			rows = append(rows, []interface{}{t.TopicID, t.TopicTitle, t.AgainstWins})
+			rows = append(rows, []interface{}{t.TopicID, t.TopicTitle, t.ForWins, t.AgainstWins})
 		}
 		results = rows
 	case "d":
@@ -1561,14 +1697,34 @@ func (h *Handlers) SeasonDetails(w http.ResponseWriter, r *http.Request) {
 // Детальная страница турнира (раунды)
 func (h *Handlers) TournamentDetailsPage(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
-	tournament, _ := h.repo.GetTournamentByID(id)
+	if id == 0 {
+		http.Error(w, "Tournament ID required", http.StatusBadRequest)
+		return
+	}
+	
+	tournament, err := h.repo.GetTournamentByID(id)
+	if err != nil {
+		log.Printf("Error getting tournament: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	if tournament == nil {
 		http.Error(w, "Tournament not found", http.StatusNotFound)
 		return
 	}
 	
-	rounds, _ := h.repo.GetRoundsByTournament(id)
-	topics, _ := h.repo.GetTopics()
+	rounds, err := h.repo.GetRoundsByTournament(id)
+	if err != nil {
+		log.Printf("Error getting rounds: %v", err)
+		rounds = []models.Round{} // Устанавливаем пустой массив при ошибке
+	}
+	
+	topics, err := h.repo.GetTopics()
+	if err != nil {
+		log.Printf("Error getting topics: %v", err)
+		topics = []models.Topic{} // Устанавливаем пустой массив при ошибке
+	}
+	
 	topicsMap := make(map[int]models.Topic)
 	for _, t := range topics {
 		topicsMap[t.ID] = t
@@ -1581,6 +1737,7 @@ func (h *Handlers) TournamentDetailsPage(w http.ResponseWriter, r *http.Request)
 	}
 	if err := h.templates.ExecuteTemplate(w, "tournament_details.html", data); err != nil {
 		log.Printf("Template error: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

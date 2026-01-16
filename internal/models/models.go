@@ -73,6 +73,15 @@ type Round struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
+type TournamentRegistration struct {
+	ID            int       `json:"id"`
+	TournamentID  int       `json:"tournament_id"`
+	ParticipantID int       `json:"participant_id"`
+	PositionID    int       `json:"position_id"` // Ссылка на debate_positions
+	Position      *DebatePosition `json:"position,omitempty"` // Загружается отдельно
+	RegisteredAt  time.Time `json:"registered_at"`
+}
+
 type Performance struct {
 	ID             int    `json:"id"`
 	RoundID        int    `json:"round_id"`
@@ -147,7 +156,6 @@ type TournamentSchedule struct {
 }
 
 // Дополнительные структуры для запросов
-
 type ParticipantAudit struct {
 	ID           int       `json:"id"`
 	ParticipantID int      `json:"participant_id"`
@@ -156,4 +164,3 @@ type ParticipantAudit struct {
 	OldData      string    `json:"old_data"` // JSONB as string
 	NewData      string    `json:"new_data"` // JSONB as string
 }
-
